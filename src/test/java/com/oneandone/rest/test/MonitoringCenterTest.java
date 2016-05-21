@@ -41,7 +41,7 @@ public class MonitoringCenterTest {
 
     @BeforeClass
     public static void getAllMonitoringCetners() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         List<MonitoringCenterResponse> result = oneandoneApi.getMonitoringCenterApi().getMonitoringCenters(0, 0, null, null, null);
         monitoringCenters = result;
         assertNotNull(result);

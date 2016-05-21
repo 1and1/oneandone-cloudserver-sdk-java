@@ -47,7 +47,7 @@ public class PrivateNetworksTest {
 
     @BeforeClass
     public static void getAllPrivateNetworks() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         List<PrivateNetworksResponse> result = oneandoneApi.getPrivateNetworkApi().getPrivateNetworks(0, 0, null, "java", null);
         privateNetworks = result;
 

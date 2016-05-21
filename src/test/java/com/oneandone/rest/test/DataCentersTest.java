@@ -36,7 +36,7 @@ public class DataCentersTest {
     
     @BeforeClass
     public static void getDataCenters() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         List<DataCenter> result = oneandoneApi.getDataCenterApi().getDataCenters(0, 0, null, null, null);
         dataCenters = result;
         assertNotNull(result);

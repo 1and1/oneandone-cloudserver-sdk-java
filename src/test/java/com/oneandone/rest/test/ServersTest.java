@@ -55,7 +55,7 @@ public class ServersTest {
 
     @BeforeClass
     public static void getAllServers() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         List<ServerResponse> servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "test", null);
         serverId = servers.get(0).getId();
         assertNotNull(servers);

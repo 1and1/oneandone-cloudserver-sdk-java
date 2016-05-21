@@ -59,7 +59,7 @@ public class MonitoringPoliciesTest {
 
     @BeforeClass
     public static void getAllMonitoringPolicies() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         List<MonitoringPoliciesResponse> result = oneandoneApi.getMonitoringPoliciesApi().getMonitoringPolicies(0, 0, null, null, null);
         monitoringPolicies = result;
         monitoringPolicy = result.get(result.size() - 1);

@@ -41,7 +41,7 @@ public class VPNTests {
 
     @BeforeClass
     public static void getVPNs() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         List<VPNResponse> result = oneandoneApi.getVpnApi().getVPNs(0, 0, null, null, null);
         vpns = result;
         assertNotNull(result);

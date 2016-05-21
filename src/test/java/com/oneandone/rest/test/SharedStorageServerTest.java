@@ -45,7 +45,7 @@ public class SharedStorageServerTest {
 
     @BeforeClass
     public static void getAllSharedStoragesServers() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         sharedStorages = oneandoneApi.getSharedStoragesApi().getShareStorages(0, 0, null, null, null);
         sharedStorage = sharedStorages.get(rand.nextInt(sharedStorages.size() - 1));
         List<SharedStorageServerResponse> result = oneandoneApi.getSharedStoragesApi().getShareStorageServers(sharedStorage.getId());

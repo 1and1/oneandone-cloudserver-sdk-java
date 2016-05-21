@@ -46,7 +46,7 @@ public class ImagesTest {
     @BeforeClass
     public static void createImage() throws RestClientException, IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         RandomImageName = "java sdk Image" + rand.nextInt(100) + 1;
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         List<ServerResponse> servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, null, null);
         serverId = servers.get(rand.nextInt(servers.size() - 1)).getId();
         Image request = new Image();

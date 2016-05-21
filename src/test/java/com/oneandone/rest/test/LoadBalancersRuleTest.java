@@ -45,7 +45,7 @@ public class LoadBalancersRuleTest {
 
     @BeforeClass
     public static void getAllLoadBalancerRules() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         List<LoadBalancerResponse> balancers = oneandoneApi.getLoadBalancerApi().getLoadBalancers(0, 0, null, "java", null);
         loadBalancers = balancers;
         if (loadBalancers.isEmpty()) {

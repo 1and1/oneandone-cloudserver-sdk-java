@@ -49,7 +49,7 @@ public class FirewallPolicyRulesTest {
     
     @BeforeClass
     public static void getAllFirewallPoliciyRules() throws RestClientException, IOException, InterruptedException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         createtestpolicy();
         Thread.sleep(10000);
         List<FirewallPolicyResponse> policies = oneandoneApi.getFirewallPoliciesApi().getFirewallPolicies(0, 0, null, "javaPolicy", null);

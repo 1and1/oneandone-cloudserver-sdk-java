@@ -47,7 +47,7 @@ public class RoleUsersTest {
 
     @BeforeClass
     public static void getRoleUsers() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         roles = oneandoneApi.getRoleApi().getRoles(0, 0, null, "java", null);
         users = oneandoneApi.getUsersApi().getUsers(0, 0, null, "03d60140.aliba", null);
         user = users.get(0).getId();

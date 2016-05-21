@@ -45,7 +45,7 @@ public class ServerPrivateNetwork {
 
     @BeforeClass
     public static void getServerPrivateNetworks() throws RestClientException, IOException, InterruptedException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "java", null);
         if (servers.size() == 1) {
             serverId = servers.get(0).getId();

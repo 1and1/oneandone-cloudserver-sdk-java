@@ -45,7 +45,7 @@ public class ServerIPTest {
 
     @BeforeClass
     public static void getServerIPS() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "java", null);
         for (ServerResponse serverItem : servers) {
             if (serverItem.getIps() != null && !serverItem.getIps().isEmpty()) {

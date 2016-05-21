@@ -41,7 +41,7 @@ public class PublicIPTest {
 
     @BeforeClass
     public static void getAllPublicIPs() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         List<PublicIPResponse> result = oneandoneApi.getPublicIPApi().getPublicIps(0, 0, null, null, null);
         publicIPs = result;
         assertNotNull(result);

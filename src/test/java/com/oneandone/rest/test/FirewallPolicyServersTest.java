@@ -45,7 +45,7 @@ public class FirewallPolicyServersTest {
 
     @BeforeClass
     public static void getAllFirewallPoliciyServerIPs() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         List<FirewallPolicyResponse> policies = oneandoneApi.getFirewallPoliciesApi().getFirewallPolicies(0, 0, null, null, null);
         firewallPolicies = policies;
         String policyId = "";

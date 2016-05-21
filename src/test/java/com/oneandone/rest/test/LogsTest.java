@@ -41,7 +41,7 @@ public class LogsTest {
 
     @BeforeClass
     public static void getAllLogs() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         List<LogResponse> result = oneandoneApi.getLogsApi().getLogs(0, 0, null, null, null, Types.PeriodType.LAST_24H);
         logs = result;
         log = logs.get(0);

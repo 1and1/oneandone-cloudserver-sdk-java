@@ -45,7 +45,7 @@ public class LoadBalancerServerIPsTest {
 
     @BeforeClass
     public static void getAllLoadBalancerServerIPs() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         List<LoadBalancerResponse> loadBalancers = oneandoneApi.getLoadBalancerApi().getLoadBalancers(0, 0, null, "java", null);
         loadbalancers = loadBalancers;
         String balancerId = "";

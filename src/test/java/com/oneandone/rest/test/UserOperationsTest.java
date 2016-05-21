@@ -43,7 +43,7 @@ public class UserOperationsTest {
 
     @BeforeClass
     public static void getUserAPIInfo() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         //filter by a username you know exists
         List<UserResponse> usersResult = oneandoneApi.getUsersApi().getUsers(0, 0, null, "03d60140.aliba", null);
         users = usersResult;

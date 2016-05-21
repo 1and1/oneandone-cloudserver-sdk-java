@@ -42,7 +42,7 @@ public class ServerSnapshotTest {
 
     @BeforeClass
     public static void getSnapshots() throws RestClientException, IOException {
-        oneandoneApi.setToken("4f34bcc24bf7bbf6af2fac5e35e600d8");
+        oneandoneApi.setToken("apiToken");
         List<ServerResponse> servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "test", null);
         Server = servers.get(rand.nextInt(servers.size() - 1));
         serverId = Server.getId();
