@@ -25,9 +25,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -38,10 +38,12 @@ public class VPNTests {
     static OneAndOneApi oneandoneApi = new OneAndOneApi();
     static Random rand = new Random();
     static List<VPNResponse> vpns;
+    static VPNResponse vpn;
 
     @BeforeClass
     public static void getVPNs() throws RestClientException, IOException {
-        oneandoneApi.setToken("apiToken");
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+        createVPN();
         List<VPNResponse> result = oneandoneApi.getVpnApi().getVPNs(0, 0, null, null, null);
         vpns = result;
         assertNotNull(result);
@@ -57,11 +59,10 @@ public class VPNTests {
 
     @Test
     public void getVPNConfiguration() throws RestClientException, IOException {
-        oneandoneApi.getVpnApi().getVPNConfigurationFile(vpns.get(0).getId(), "C:\\ali");
+        oneandoneApi.getVpnApi().getVPNConfigurationFile(vpns.get(0).getId(), "C:\\temp");
     }
 
-    @Test
-    public void createVPN() throws RestClientException, IOException {
+    public static void createVPN() throws RestClientException, IOException {
         String randomValue = rand.nextInt(99) + "test.java";
 
         CreateVPNRequest request = new CreateVPNRequest();
@@ -71,16 +72,15 @@ public class VPNTests {
         if (!datacenters.isEmpty()) {
             request.setDatacenterId(datacenters.get(0).getId());
 
-            VPNResponse result = oneandoneApi.getVpnApi().createVPN(request);
-            assertNotNull(result);
-            assertNotNull(result.getId());
+            vpn = oneandoneApi.getVpnApi().createVPN(request);
+            assertNotNull(vpn);
+            assertNotNull(vpn.getId());
         }
     }
 
     @Test
     public void updateVPN() throws RestClientException, IOException, InterruptedException {
         String randomValue = rand.nextInt(99) + "update.java";
-        VPNResponse vpn = vpns.get(vpns.size() - 1);
         UpdateVPNRequest request = new UpdateVPNRequest();
         request.setName(randomValue);
         VPNResponse result = oneandoneApi.getVpnApi().updateVPN(vpn.getId(), request);
@@ -94,8 +94,6 @@ public class VPNTests {
 
     @AfterClass
     public static void deleteVPN() throws RestClientException, IOException, InterruptedException {
-        List<VPNResponse> updatedVpns = oneandoneApi.getVpnApi().getVPNs(0, 0, null, "java", null);
-        VPNResponse vpn = updatedVpns.get(updatedVpns.size() - 1);
         VPNResponse result = oneandoneApi.getVpnApi().deleteVPN(vpn.getId());
 
         assertNotNull(result);

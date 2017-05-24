@@ -15,12 +15,15 @@
  */
 package com.oneandone.rest.test;
 
-import com.oneandone.rest.client.RestClientException;
+import com.oneandone.rest.POJO.Requests.AssignFirewallServerIPRequest;
+import com.oneandone.rest.POJO.Requests.CreateFirewallPocliyRule;
+import com.oneandone.rest.POJO.Requests.CreateFirewallPolicyRequest;
 import com.oneandone.rest.POJO.Response.FirewallPolicyResponse;
 import com.oneandone.rest.POJO.Response.FirewallPolicyServerIPsResponse;
-import com.oneandone.rest.POJO.Requests.AssignFirewallServerIPRequest;
 import com.oneandone.rest.POJO.Response.ServerIPs;
-import com.oneandone.rest.POJO.Response.ServerResponse;
+import com.oneandone.rest.POJO.Response.Types;
+import com.oneandone.rest.client.RestClientException;
+import static com.oneandone.rest.test.TestHelper.CreateTestServer;
 import com.oneandone.sdk.OneAndOneApi;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,86 +42,71 @@ public class FirewallPolicyServersTest {
 
     static OneAndOneApi oneandoneApi = new OneAndOneApi();
     static Random rand = new Random();
-    static List<FirewallPolicyResponse> firewallPolicies;
     static FirewallPolicyResponse firewallPolicy;
-    static List<FirewallPolicyServerIPsResponse> serverIps;
+    static String serverId;
+    static ServerIPs serverIP;
 
     @BeforeClass
-    public static void getAllFirewallPoliciyServerIPs() throws RestClientException, IOException {
-        oneandoneApi.setToken("apiToken");
-        List<FirewallPolicyResponse> policies = oneandoneApi.getFirewallPoliciesApi().getFirewallPolicies(0, 0, null, null, null);
-        firewallPolicies = policies;
-        String policyId = "";
-        if (firewallPolicies.isEmpty()) {
-            return;
+    public static void testInit() throws RestClientException, IOException, InterruptedException {
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+        CreateFirewallPolicyRequest request = new CreateFirewallPolicyRequest();
+        List<CreateFirewallPocliyRule> rules = new ArrayList<CreateFirewallPocliyRule>();
+        CreateFirewallPocliyRule ruleA = new CreateFirewallPocliyRule();
+
+        ruleA.setSource("0.0.0.0");
+        ruleA.setPortTo(80);
+        ruleA.setPortFrom(80);
+        ruleA.setProtocol(Types.RuleProtocol.TCP);
+        rules.add(ruleA);
+        request.setRules(rules);
+        request.setName("javaPolicy" + rand.nextInt(200));
+        request.setDescription("desc");
+
+        firewallPolicy = oneandoneApi.getFirewallPoliciesApi().createFirewallPolicy(request);
+
+        assertNotNull(firewallPolicy);
+
+        serverId = CreateTestServer("firewall policy server test0", true).getId();
+
+        TestHelper.waitFirewallPolicyReady(firewallPolicy.getId());
+        createFirewallPolicyServerIP();
+        TestHelper.waitFirewallPolicyReady(firewallPolicy.getId());
+    }
+
+    @AfterClass
+    public static void testCleanup() throws RestClientException, IOException, InterruptedException {
+        TestHelper.waitFirewallPolicyReady(firewallPolicy.getId());
+        FirewallPolicyResponse result = oneandoneApi.getFirewallPoliciesApi().deleteFirewallPolicy(firewallPolicy.getId());
+        assertNotNull(result);
+
+        if (serverId != null) {
+            TestHelper.waitServerReady(serverId);
+            oneandoneApi.getServerApi().deleteServer(serverId, false);
         }
-        for (FirewallPolicyResponse response : firewallPolicies) {
-            if (!response.getServerIps().isEmpty()) {
-                policyId = response.getId();
-                break;
-            }
-        }
-        if (!policyId.isEmpty()) {
-            firewallPolicy = oneandoneApi.getFirewallPoliciesApi().getFirewallPolicy(policyId);
-            List<FirewallPolicyServerIPsResponse> result = oneandoneApi.getFirewallPolicyServerApi().getFirewallPolicyServerIPs(firewallPolicy.getId());
-            serverIps = result;
-            assertNotNull(result);
-        }
+    }
+
+    @Test
+    public void getAllFirewallPoliciyServerIPs() throws RestClientException, IOException {
+        List<FirewallPolicyServerIPsResponse> result = oneandoneApi.getFirewallPolicyServerApi().getFirewallPolicyServerIPs(firewallPolicy.getId());
+        assertNotNull(result);
     }
 
     @Test
     public void getFirewallPolicyServerIP() throws RestClientException, IOException {
-        if (!serverIps.isEmpty()) {
-            if (firewallPolicy == null) {
-                firewallPolicy = firewallPolicies.get(rand.nextInt(firewallPolicies.size() - 1));
-            }
-            FirewallPolicyServerIPsResponse result = oneandoneApi.getFirewallPolicyServerApi().getFirewallPolicyServerIPs(firewallPolicy.getId(), serverIps.get(0).getId());
+        FirewallPolicyServerIPsResponse result = oneandoneApi.getFirewallPolicyServerApi().getFirewallPolicyServerIPs(firewallPolicy.getId(), serverIP.getId());
 
-            assertNotNull(result);
-            assertNotNull(result.getId());
-        }
+        assertNotNull(result);
+        assertNotNull(result.getId());
     }
 
-    @Test
-    public void createFirewallPolicyServerIP() throws RestClientException, IOException {
-        List<ServerResponse> servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, null, null);
+    public static void createFirewallPolicyServerIP() throws RestClientException, IOException {
         AssignFirewallServerIPRequest request = new AssignFirewallServerIPRequest();
-        ServerIPs serverIP = null;
-        if (!servers.isEmpty()) {
-            for (ServerResponse curServer : servers) {
-                if (curServer.getIps() != null && !curServer.getIps().isEmpty()) {
-                    serverIP = curServer.getIps().get(0);
-                    break;
-                }
-            }
-            if (serverIP != null) {
-                List<String> ipToAdd = new ArrayList<String>();
-                ipToAdd.add(serverIP.getId());
-                request.setServerIps(ipToAdd);
-                if (firewallPolicy == null) {
-                    firewallPolicy = firewallPolicies.get(rand.nextInt(firewallPolicies.size() - 1));
-                }
-                FirewallPolicyResponse result = oneandoneApi.getFirewallPolicyServerApi().createFirewallPolicyServerIPs(request, firewallPolicy.getId());
-                assertNotNull(result);
-                assertNotNull(result.getId());
-            }
-        }
+        serverIP = oneandoneApi.getServerApi().getServer(serverId).getIps().get(0);
+        List<String> ipToAdd = new ArrayList<String>();
+        ipToAdd.add(serverIP.getId());
+        request.setServerIps(ipToAdd);
+        FirewallPolicyResponse result = oneandoneApi.getFirewallPolicyServerApi().createFirewallPolicyServerIPs(request, firewallPolicy.getId());
+        assertNotNull(result);
+        assertNotNull(result.getId());
     }
-
-    @AfterClass
-    public static void deleteFirewallPolicyServerIP() throws RestClientException, IOException, InterruptedException {
-        for (FirewallPolicyResponse policy : firewallPolicies) {
-            if (policy.getServerIps() != null && !policy.getServerIps().isEmpty()) {
-                firewallPolicy = policy;
-                break;
-            }
-        }
-
-        if (firewallPolicy != null && firewallPolicy.getServerIps() != null && firewallPolicy.getServerIps().size() > 0) {
-            FirewallPolicyResponse result = oneandoneApi.getFirewallPolicyServerApi().deleteFirewallPolicyServerIPs(firewallPolicy.getId(), firewallPolicy.getServerIps().get(0).getId());
-            assertNotNull(result);
-            assertNotNull(result.getId());
-        }
-    }
-
 }

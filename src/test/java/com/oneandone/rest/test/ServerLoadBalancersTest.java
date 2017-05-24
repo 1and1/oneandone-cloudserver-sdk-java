@@ -15,20 +15,24 @@
  */
 package com.oneandone.rest.test;
 
-import com.oneandone.rest.client.RestClientException;
 import com.oneandone.rest.POJO.Requests.AssignLoadBalancerRequest;
+import com.oneandone.rest.POJO.Requests.CreateLoadBalancerRequest;
+import com.oneandone.rest.POJO.Requests.LoadBalancerRuleRequest;
 import com.oneandone.rest.POJO.Response.LoadBalancerResponse;
-import com.oneandone.rest.POJO.Response.ServerIPs;
 import com.oneandone.rest.POJO.Response.ServerLoadBalancers;
 import com.oneandone.rest.POJO.Response.ServerResponse;
-import static com.oneandone.rest.test.ServerHardwareTest.serverId;
+import com.oneandone.rest.POJO.Response.Types;
+import com.oneandone.rest.client.RestClientException;
+import static com.oneandone.rest.test.TestHelper.CreateTestServer;
 import com.oneandone.sdk.OneAndOneApi;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import org.junit.Test;
+import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *
@@ -40,71 +44,62 @@ public class ServerLoadBalancersTest {
     static Random rand = new Random();
     static String serverId;
     static String ipId;
-    static List<ServerResponse> servers;
     static ServerResponse server;
+    static LoadBalancerResponse lb;
 
     @BeforeClass
     public static void getLoadBalancers() throws RestClientException, IOException, InterruptedException {
-        oneandoneApi.setToken("apiToken");
-        servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "java", null);
-        if (servers.size() == 1) {
-            serverId = servers.get(0).getId();
-        } else {
-            serverId = servers.get(rand.nextInt(servers.size() - 1)).getId();
-        }
-        ServerResponse server = null;
-        List<ServerLoadBalancers> result = null;
-        for (ServerResponse item : servers) {
-            Thread.sleep(1000);
-            server = oneandoneApi.getServerApi().getServer(item.getId());
-            for (ServerIPs ip : server.getIps()) {
-                result = oneandoneApi.getServerIpsApi().getServerIPLoadBalancers(item.getId(), ip.getId());
-                assertNotNull(result);
-                break;
-            }
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+        serverId = CreateTestServer("servers loadbalancer test", true).getId();
+        server = oneandoneApi.getServerApi().getServer(serverId);
 
-        }
+        CreateLoadBalancerRequest request = new CreateLoadBalancerRequest();
+
+        request.setDescription("javaLBDesc");
+        request.setName("javaLBTest" + rand.nextInt(300));
+        request.setHealthCheckInterval(1);
+        request.setPersistence(true);
+        request.setPersistenceTime(30);
+        request.setHealthCheckTest(Types.HealthCheckTestTypes.NONE);
+        request.setMethod(Types.LoadBalancerMethod.ROUND_ROBIN);
+
+        List<LoadBalancerRuleRequest> rules = new ArrayList<LoadBalancerRuleRequest>();
+        LoadBalancerRuleRequest ruleA = new LoadBalancerRuleRequest();
+
+        ruleA.setPortBalancer(80);
+        ruleA.setProtocol(Types.LBRuleProtocol.TCP);
+        ruleA.setSource("0.0.0.0");
+        ruleA.setPortServer(80);
+        rules.add(ruleA);
+
+        request.setRules(rules);
+        lb = oneandoneApi.getLoadBalancerApi().createLoadBalancer(request);
+        TestHelper.waitLoadBalancerReady(lb.getId());
+
+        AssignLoadBalancerRequest lbRequest = new AssignLoadBalancerRequest();
+        lbRequest.setLoadBalancerId(lb.getId());
+        ServerResponse lbresult = oneandoneApi.getServerIpsApi().createServerIPLoadBalancer(serverId, server.getIps().get(0).getId(), lbRequest);
+        assertNotNull(lbresult);
     }
 
     @Test
-    public void createLoadBalancer() throws RestClientException, IOException, InterruptedException {
-        servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, null, null);
-        ServerResponse result;
-        List<LoadBalancerResponse> loadbalancers = oneandoneApi.getLoadBalancerApi().getLoadBalancers(0, 0, null, null, null);
-        String loadBalancerid = loadbalancers.get(0).getId();
-
-        for (ServerResponse item : servers) {
-            Thread.sleep(1000);
-            server = oneandoneApi.getServerApi().getServer(item.getId());
-            AssignLoadBalancerRequest request = new AssignLoadBalancerRequest();
-            request.setLoadBalancerId(loadBalancerid);
-            result = oneandoneApi.getServerIpsApi().createServerIPLoadBalancer(item.getId(), item.getIps().get(0).getId(), request);
-            assertNotNull(result);
-            assertNotNull(result);
-            break;
-        }
+    public void getLoadbalancerServer() throws RestClientException, IOException {
+        List<ServerLoadBalancers> result = oneandoneApi.getServerIpsApi().getServerIPLoadBalancers(serverId, server.getIps().get(0).getId());
+        assertNotNull(result);
     }
 
-    @Test
-    public void deleteLoadBalancer() throws RestClientException, IOException, InterruptedException {
-        servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "java", null);
-        boolean BreakAll = false;
-        ServerIPs currentIP = null;
-        for (ServerResponse item : servers) {
-            if (BreakAll) {
-                break;
-            }
-            Thread.sleep(1000);
-            server = oneandoneApi.getServerApi().getServer(item.getId());
-            for (ServerIPs ip : server.getIps()) {
-                if (ip.getLoadBalancers() != null && ip.getLoadBalancers().size() > 0) {
-                    currentIP = ip;
-                    ServerResponse result = oneandoneApi.getServerIpsApi().deleteServerIPLoadBalancer(item.getId(), ip.getId());
-                    assertNotNull(result);
-                    BreakAll = true;
-                    break;
-                }
-            }
+    @AfterClass
+    public static void cleanupTest() throws RestClientException, IOException, InterruptedException {
+        if (lb != null) {
+            TestHelper.waitLoadBalancerReady(lb.getId());
+            server = oneandoneApi.getServerApi().getServer(serverId);
+            ServerResponse result = oneandoneApi.getServerIpsApi().deleteServerIPLoadBalancer(serverId, server.getIps().get(0).getId(), lb.getId());
+            TestHelper.waitLoadBalancerReady(lb.getId());
+            oneandoneApi.getLoadBalancerApi().deleteLoadBalancer(lb.getId());
+        }
+        if (serverId != null) {
+            TestHelper.waitServerReady(serverId);
+            oneandoneApi.getServerApi().deleteServer(serverId, false);
         }
     }
 }

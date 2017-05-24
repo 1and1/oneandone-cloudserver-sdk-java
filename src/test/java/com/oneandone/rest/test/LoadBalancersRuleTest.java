@@ -16,6 +16,7 @@
 package com.oneandone.rest.test;
 
 import com.oneandone.rest.POJO.Requests.AddLoadBalancerRuleRequest;
+import com.oneandone.rest.POJO.Requests.CreateLoadBalancerRequest;
 import com.oneandone.rest.POJO.Requests.LoadBalancerRuleRequest;
 import com.oneandone.rest.POJO.Response.LoadBalancerResponse;
 import com.oneandone.rest.POJO.Response.LoadBalancerRulesResponse;
@@ -27,9 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -44,17 +45,40 @@ public class LoadBalancersRuleTest {
     static List<LoadBalancerRulesResponse> rules;
 
     @BeforeClass
-    public static void getAllLoadBalancerRules() throws RestClientException, IOException {
-        oneandoneApi.setToken("apiToken");
-        List<LoadBalancerResponse> balancers = oneandoneApi.getLoadBalancerApi().getLoadBalancers(0, 0, null, "java", null);
-        loadBalancers = balancers;
-        if (loadBalancers.isEmpty()) {
-            return;
-        }
-        loadBalancer = oneandoneApi.getLoadBalancerApi().getLoadBalancer(loadBalancers.get(rand.nextInt(loadBalancers.size())).getId());
+    public static void testInit() throws RestClientException, IOException, InterruptedException {
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+        createLoadBalancer();
         List<LoadBalancerRulesResponse> result = oneandoneApi.getLoadBalancerRuleApi().getLoadBalancerRules(loadBalancer.getId());
         rules = result;
         assertNotNull(result);
+        createLoadBalancerRule();
+        TestHelper.waitLoadBalancerReady(loadBalancer.getId());
+    }
+
+    public static void createLoadBalancer() throws RestClientException, IOException {
+        CreateLoadBalancerRequest request = new CreateLoadBalancerRequest();
+
+        request.setDescription("javaLBDesc");
+        request.setName("javaLBTest" + rand.nextInt(300));
+        request.setHealthCheckInterval(1);
+        request.setPersistence(true);
+        request.setPersistenceTime(30);
+        request.setHealthCheckTest(Types.HealthCheckTestTypes.NONE);
+        request.setMethod(Types.LoadBalancerMethod.ROUND_ROBIN);
+
+        List<LoadBalancerRuleRequest> rules = new ArrayList<LoadBalancerRuleRequest>();
+        LoadBalancerRuleRequest ruleA = new LoadBalancerRuleRequest();
+
+        ruleA.setPortBalancer(80);
+        ruleA.setProtocol(Types.LBRuleProtocol.TCP);
+        ruleA.setSource("0.0.0.0");
+        ruleA.setPortServer(80);
+        rules.add(ruleA);
+
+        request.setRules(rules);
+        loadBalancer = oneandoneApi.getLoadBalancerApi().createLoadBalancer(request);
+        assertNotNull(loadBalancer);
+
     }
 
     @Test
@@ -66,8 +90,7 @@ public class LoadBalancersRuleTest {
 
     }
 
-    @Test
-    public void createLoadBalancerRule() throws RestClientException, IOException {
+    public static void createLoadBalancerRule() throws RestClientException, IOException {
         AddLoadBalancerRuleRequest request = new AddLoadBalancerRuleRequest();
         List<LoadBalancerRuleRequest> rules = new ArrayList<LoadBalancerRuleRequest>();
         LoadBalancerRuleRequest ruleA = new LoadBalancerRuleRequest();
@@ -78,25 +101,18 @@ public class LoadBalancersRuleTest {
         ruleA.setProtocol(Types.LBRuleProtocol.TCP);
         rules.add(ruleA);
         request.setRules(rules);
-
         LoadBalancerResponse result = oneandoneApi.getLoadBalancerRuleApi().createLoadBalancerRule(request, loadBalancer.getId());
-
         assertNotNull(result);
-
     }
 
     @AfterClass
     public static void deleteLoadBalancerRule() throws RestClientException, IOException, InterruptedException {
-        for (LoadBalancerResponse policy : loadBalancers) {
-            if (policy.getRules() != null && policy.getRules().size() > 0) {
-                loadBalancer = policy;
-                break;
-            }
-        }
-        if (loadBalancer != null && loadBalancer.getRules() != null && loadBalancer.getRules().size() > 0) {
-            LoadBalancerResponse result = oneandoneApi.getLoadBalancerRuleApi().deleteLoadBalancerRule(loadBalancer.getId(), loadBalancer.getRules().get(0).getId());
-            assertNotNull(result);
-            assertNotNull(result.getId());
+        LoadBalancerResponse result = oneandoneApi.getLoadBalancerRuleApi().deleteLoadBalancerRule(loadBalancer.getId(), rules.get(0).getId());
+        assertNotNull(result);
+        assertNotNull(result.getId());
+        if (loadBalancer != null) {
+            TestHelper.waitLoadBalancerReady(loadBalancer.getId());
+            oneandoneApi.getLoadBalancerApi().deleteLoadBalancer(loadBalancer.getId());
         }
     }
 

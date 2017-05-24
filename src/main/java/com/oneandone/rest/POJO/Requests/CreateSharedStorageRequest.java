@@ -15,6 +15,8 @@
  */
 package com.oneandone.rest.POJO.Requests;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  *
  * @author aliba
@@ -23,6 +25,8 @@ public class CreateSharedStorageRequest extends BaseRequest {
     private String name;
     private String description;
     private int size;
+    @JsonProperty("datacenter_id")
+    private String datacenterId;
 
     /**
      * Name of the shared storage
@@ -36,6 +40,21 @@ public class CreateSharedStorageRequest extends BaseRequest {
      */
     public void setName(String name) {
         this.name = name;
+    }
+    
+    
+    /**
+     * Id of the data center
+     */
+    public String getDataCenter() {
+        return datacenterId;
+    }
+
+    /**
+     * @param datacenterId the data center to set
+     */
+    public void setDataCenter(String datacenterId) {
+        this.datacenterId = datacenterId;
     }
 
     /**

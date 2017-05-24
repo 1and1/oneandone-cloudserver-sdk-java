@@ -15,18 +15,21 @@
  */
 package com.oneandone.rest.test;
 
-import com.oneandone.rest.client.RestClientException;
+import com.oneandone.rest.POJO.Requests.CreateCloneRequest;
 import com.oneandone.rest.POJO.Requests.UpdateServerImageRequest;
 import com.oneandone.rest.POJO.Response.ServerImage;
 import com.oneandone.rest.POJO.Response.ServerResponse;
 import com.oneandone.rest.POJO.Response.Types.ServerState;
+import com.oneandone.rest.client.RestClientException;
+import static com.oneandone.rest.test.TestHelper.CreateTestServer;
 import com.oneandone.sdk.OneAndOneApi;
 import java.io.IOException;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
-import org.junit.Test;
+import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *
@@ -37,36 +40,51 @@ public class ServerImageTest {
     static OneAndOneApi oneandoneApi = new OneAndOneApi();
     static Random rand = new Random();
     static String serverId;
+    static String cloneServerId;
 
     @BeforeClass
     public static void getServerImage() throws RestClientException, IOException, InterruptedException {
-        oneandoneApi.setToken("apiToken");
-        List<ServerResponse> servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "java", null);
-        if (servers.size() == 1) {
-            serverId = servers.get(0).getId();
-        } else {
-            serverId = servers.get(rand.nextInt(servers.size() - 1)).getId();
-        }
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+        serverId = CreateTestServer("servers hardware test", true).getId();
         ServerImage image = oneandoneApi.getServerImageApi().getImage(serverId);
         assertNotNull(image);
+        TestHelper.waitServerReady(serverId);
+    }
 
+    @AfterClass
+    public static void deleteServer() throws RestClientException, IOException, InterruptedException {
+        if (serverId != null) {
+            TestHelper.waitServerReady(serverId);
+            oneandoneApi.getServerApi().deleteServer(serverId, false);
+        }
+        if (cloneServerId != null) {
+            TestHelper.waitServerReady(cloneServerId);
+            oneandoneApi.getServerApi().deleteServer(cloneServerId, false);
+        }
     }
 
     @Test
     public void updateServerImage() throws RestClientException, IOException, InterruptedException {
+        TestHelper.waitServerReady(serverId);
         String randomName = "Pass!" + rand.nextInt(3000) + "T";
         ServerResponse server = oneandoneApi.getServerApi().getServer(serverId);
-        if (server.getStatus().getState() != ServerState.DEPLOYING && server.getStatus().getState() != ServerState.REMOVING
-                && server.getStatus().getState() != ServerState.POWERED_OFF) {
-            UpdateServerImageRequest request = new UpdateServerImageRequest();
-            request.setId(server.getImage().getId());
-            request.setPassword(randomName);
+        UpdateServerImageRequest request = new UpdateServerImageRequest();
+        request.setId(server.getImage().getId());
+        request.setPassword(randomName);
+        ServerResponse result = oneandoneApi.getServerImageApi().updateImage(serverId, request);
+        assertNotNull(result);
+        //check if the image is deploying
+        assertTrue(result.getStatus().getState() == ServerState.DEPLOYING);
+    }
 
-            ServerResponse result = oneandoneApi.getServerImageApi().updateImage(serverId, request);
-
-            assertNotNull(result);
-            //check if the image is deploying
-            assertTrue(result.getStatus().getState() == ServerState.DEPLOYING);
-        }
+    @Test
+    public void createClone() throws RestClientException, IOException, InterruptedException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
+        TestHelper.waitServerReady(serverId);
+        CreateCloneRequest request = new CreateCloneRequest();
+        request.setName("javaClone" + rand.nextInt(200));
+        ServerResponse result = oneandoneApi.getServerApi().createClone(request, serverId);
+        cloneServerId = result.getId();
+        assertNotNull(result);
+        assertNotNull(result.getId());
     }
 }

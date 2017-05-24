@@ -15,19 +15,19 @@
  */
 package com.oneandone.rest.test;
 
-import com.oneandone.rest.client.RestClientException;
-import com.oneandone.rest.POJO.Requests.CreateCloneRequest;
 import com.oneandone.rest.POJO.Response.ServerResponse;
 import com.oneandone.rest.POJO.Response.Snapshot;
-import com.oneandone.rest.POJO.Response.Types;
+import com.oneandone.rest.client.RestClientException;
 import static com.oneandone.rest.test.ServersTest.oneandoneApi;
+import static com.oneandone.rest.test.TestHelper.CreateTestServer;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Random;
-import org.junit.Test;
+import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *
@@ -37,87 +37,49 @@ public class ServerSnapshotTest {
 
     static Random rand = new Random();
     private static String RandomServerName;
-    static ServerResponse Server;
+    static ServerResponse server;
     static String serverId;
 
     @BeforeClass
-    public static void getSnapshots() throws RestClientException, IOException {
-        oneandoneApi.setToken("apiToken");
-        List<ServerResponse> servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "test", null);
-        Server = servers.get(rand.nextInt(servers.size() - 1));
-        serverId = Server.getId();
+    public static void testInit() throws RestClientException, IOException, InterruptedException {
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+        serverId = CreateTestServer("servers snapshot test", true).getId();
+        server = oneandoneApi.getServerApi().getServer(serverId);
+        ServerResponse result = oneandoneApi.getServerApi().createSnapshot(serverId);
+        assertNotNull(result);
+        assertNotNull(result.getId());
+    }
+
+    @AfterClass
+    public static void cleanupTest() throws RestClientException, IOException, InterruptedException {
+        TestHelper.waitServerReady(serverId);
+        oneandoneApi.getServerApi().deleteServer(serverId, false);
+    }
+
+    @Test
+    public void getSnapshots() throws RestClientException, IOException {
         List<Snapshot> result = oneandoneApi.getServerApi().getSnapshots(serverId);
         assertNotNull(result);
     }
 
     @Test
     public void updateSnapshot() throws RestClientException, IOException, InterruptedException {
-        List<ServerResponse> servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "test", null);
-        ServerResponse server = oneandoneApi.getServerApi().getServer(serverId);
-        for (ServerResponse item : servers) {
-            Thread.sleep(1000);
-            server = oneandoneApi.getServerApi().getServer(item.getId());
-            if (server.getSnapshot() != null) {
-                if (server.getStatus().getState() == Types.ServerState.POWERED_OFF && server.getStatus().getPercent() == 0) {
-                    ServerResponse result = oneandoneApi.getServerApi().updateSnapshot(server.getId(), server.getSnapshot().getId());
-                    assertNotNull(result);
-                    assertNotNull(result.getId());
-                    break;
-
-                }
-            }
-        }
-    }
-
-    @Test
-    public void createSnapshot() throws RestClientException, IOException, InterruptedException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
-        List<ServerResponse> servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "test", null);
-        ServerResponse server = oneandoneApi.getServerApi().getServer(serverId);
-        for (ServerResponse item : servers) {
-            Thread.sleep(1000);
-            server = oneandoneApi.getServerApi().getServer(item.getId());
-            if (server.getSnapshot() == null) {
-                ServerResponse result = oneandoneApi.getServerApi().createSnapshot(server.getId());
-                assertNotNull(result);
-                assertNotNull(result.getId());
-                break;
-
-            }
-        }
+        TestHelper.waitServerReady(serverId);
+        server = oneandoneApi.getServerApi().getServer(serverId);
+        ServerResponse result = oneandoneApi.getServerApi().updateSnapshot(server.getId(), server.getSnapshot().getId());
+        assertNotNull(result);
+        assertNotNull(result.getId());
+        TestHelper.waitServerReady(serverId);
     }
 
     @Test
     public void deleteSnapshot() throws RestClientException, IOException, InterruptedException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
-        List<ServerResponse> servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "test", null);
-        ServerResponse server = oneandoneApi.getServerApi().getServer(serverId);
-        for (ServerResponse item : servers) {
-            Thread.sleep(1000);
-            server = oneandoneApi.getServerApi().getServer(item.getId());
-            if (server.getSnapshot() != null) {
-                ServerResponse result = oneandoneApi.getServerApi().deleteSnapshot(server.getId(), server.getSnapshot().getId());
-                assertNotNull(result);
-                assertNotNull(result.getId());
-                break;
-            }
-        }
+        TestHelper.waitServerReady(serverId);
+        server = oneandoneApi.getServerApi().getServer(serverId);
+        ServerResponse result = oneandoneApi.getServerApi().deleteSnapshot(serverId, server.getSnapshot().getId());
+        assertNotNull(result);
+        assertNotNull(result.getId());
+        TestHelper.waitServerReady(serverId);
     }
-    
-    @Test
-    public void createClone() throws RestClientException, IOException, InterruptedException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
-        List<ServerResponse> servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "test", null);
-        ServerResponse server = oneandoneApi.getServerApi().getServer(serverId);
-        for (ServerResponse item : servers) {
-            Thread.sleep(1000);
-            server = oneandoneApi.getServerApi().getServer(item.getId());
-            if (server.getSnapshot() == null && server.getStatus().getPercent()==0) {
-                CreateCloneRequest request=new CreateCloneRequest();
-                request.setName("javaClone"+rand.nextInt(200));
-                ServerResponse result = oneandoneApi.getServerApi().createClone(request,server.getId());
-                assertNotNull(result);
-                assertNotNull(result.getId());
-                break;
 
-            }
-        }
-    }
 }

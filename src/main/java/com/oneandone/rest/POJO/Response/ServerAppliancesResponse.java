@@ -16,8 +16,6 @@
 package com.oneandone.rest.POJO.Response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.oneandone.rest.POJO.Response.Types.OSFamliyType;
-import com.oneandone.rest.POJO.Response.Types.OSImageType;
 import java.util.ArrayList;
 import java.util.List;
 

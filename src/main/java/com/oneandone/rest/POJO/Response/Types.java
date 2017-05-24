@@ -77,7 +77,7 @@ public class Types {
     }
 
     public enum OSType {
-        CentOS("CentOS"),
+        CentOS("Centos"),
         Debian("Debian"),
         Ubuntu("Ubuntu"),
         RedHat("Red Hat"),

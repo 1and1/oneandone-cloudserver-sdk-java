@@ -15,7 +15,6 @@
  */
 package com.oneandone.sdk;
 
-import com.oneandone.rest.client.RestClientException;
 import com.oneandone.rest.POJO.Requests.AssignLoadBalancerRequest;
 import com.oneandone.rest.POJO.Requests.CreateServerIPRequest;
 import com.oneandone.rest.POJO.Requests.IdRequest;
@@ -23,6 +22,7 @@ import com.oneandone.rest.POJO.Response.ServerFirewallPolicy;
 import com.oneandone.rest.POJO.Response.ServerIPs;
 import com.oneandone.rest.POJO.Response.ServerLoadBalancers;
 import com.oneandone.rest.POJO.Response.ServerResponse;
+import com.oneandone.rest.client.RestClientException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -155,8 +155,8 @@ public class ServerIpsApi extends OneAndOneAPIBase {
      * @throws RestClientException
      * @throws IOException
      */
-    public ServerResponse deleteServerIPLoadBalancer(String serverId, String ipId) throws RestClientException, IOException {
-        return client.delete(getUrlBase().concat(parentResource).concat("/").concat(serverId).concat("/").concat(resource).concat("/").concat(ipId).concat("/").concat("load_balancers"), ServerResponse.class);
+    public ServerResponse deleteServerIPLoadBalancer(String serverId, String ipId,String lbId) throws RestClientException, IOException {
+        return client.delete(getUrlBase().concat(parentResource).concat("/").concat(serverId).concat("/").concat(resource).concat("/").concat(ipId).concat("/").concat("load_balancers").concat("/").concat(lbId), ServerResponse.class);
     }
 
 }
