@@ -49,3 +49,11 @@ nb-configuration.xml
 *.jar
 *.war
 *.ear
+/nb-configuration.xml
+/nbactions.xml
+/src/test/java/com/oneandone/rest/test/PrivateNetworkServerTest.java
+/src/test/java/com/oneandone/rest/test/RolePermissionsTest.java
+/src/test/java/com/oneandone/rest/test/RoleUsersTest.java
+/src/test/java/com/oneandone/rest/test/TestTest.java
+/target
+/nbproject
