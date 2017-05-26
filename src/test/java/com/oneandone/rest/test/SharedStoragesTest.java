@@ -15,20 +15,21 @@
  */
 package com.oneandone.rest.test;
 
-import com.oneandone.rest.client.RestClientException;
 import com.oneandone.rest.POJO.Requests.CreateSharedStorageRequest;
-import com.oneandone.rest.POJO.Requests.UpdateSharedStorageRequest;
 import com.oneandone.rest.POJO.Requests.UpdateSharedStorageAccessRequest;
+import com.oneandone.rest.POJO.Requests.UpdateSharedStorageRequest;
+import com.oneandone.rest.POJO.Response.DataCenter;
 import com.oneandone.rest.POJO.Response.ShareStorageAccessResponse;
 import com.oneandone.rest.POJO.Response.SharedStorageResponse;
+import com.oneandone.rest.client.RestClientException;
 import com.oneandone.sdk.OneAndOneApi;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 import org.junit.AfterClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *
@@ -38,70 +39,50 @@ public class SharedStoragesTest {
 
     static OneAndOneApi oneandoneApi = new OneAndOneApi();
     static Random rand = new Random();
+    static SharedStorageResponse sharedStorageResponse;
 
     @BeforeClass
-    public static void getAllSharedStorages() throws RestClientException, IOException {
-        oneandoneApi.setToken("apiToken");
-        List<SharedStorageResponse> result = oneandoneApi.getSharedStoragesApi().getShareStorages(0, 0, null, null, null);
+    public static void testInit() throws RestClientException, IOException {
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+        List<DataCenter> dcs = oneandoneApi.getDataCenterApi().getDataCenters(0, 0, null, null, null);
+        CreateSharedStorageRequest request = new CreateSharedStorageRequest();
+        request.setName("javaStorage" + rand.nextInt(200));
+        request.setDescription("desc");
+        request.setSize(50);
+        request.setDataCenter(dcs.get(0).getId());
+        SharedStorageResponse result = oneandoneApi.getSharedStoragesApi().createShareStorage(request);
+        sharedStorageResponse = result;
+        assertNotNull(result);
+    }
 
+    @Test
+    public void getAllSharedStorages() throws RestClientException, IOException {
+        List<SharedStorageResponse> result = oneandoneApi.getSharedStoragesApi().getShareStorages(0, 0, null, null, null);
         assertNotNull(result);
     }
 
     @Test
     public void getSharedStorage() throws RestClientException, IOException {
-        List<SharedStorageResponse> sharedStorages = oneandoneApi.getSharedStoragesApi().getShareStorages(0, 0, null, null, null);
-        SharedStorageResponse sharedStorage;
-        if (sharedStorages.size() == 1) {
-            sharedStorage = sharedStorages.get(0);
-
-        } else {
-            sharedStorage = sharedStorages.get(rand.nextInt(sharedStorages.size() - 1));
-        }
-        SharedStorageResponse result = oneandoneApi.getSharedStoragesApi().getShareStorage(sharedStorage.getId());
+        SharedStorageResponse result = oneandoneApi.getSharedStoragesApi().getShareStorage(sharedStorageResponse.getId());
 
         assertNotNull(result);
         assertNotNull(result.getId());
-
-    }
-
-    @Test
-    public void createSharedStorage() throws RestClientException, IOException {
-        CreateSharedStorageRequest request = new CreateSharedStorageRequest();
-        request.setName("javaStorage" + rand.nextInt(200));
-        request.setDescription("desc");
-        request.setSize(50);
-        SharedStorageResponse result = oneandoneApi.getSharedStoragesApi().createShareStorage(request);
-
-        assertNotNull(result);
 
     }
 
     @Test
     public void updateSharedStorage() throws RestClientException, IOException, InterruptedException {
-        List<SharedStorageResponse> sharedStorages = oneandoneApi.getSharedStoragesApi().getShareStorages(0, 0, null, null, null);
-        SharedStorageResponse sharedStorage = sharedStorages.get(rand.nextInt(sharedStorages.size() - 1));
-
-        for (SharedStorageResponse storage : sharedStorages) {
-            while (!"CONFIGURING".equals(storage.getState())) {
-                sharedStorage = storage;
-                break;
-            }
-        }
-
-        while ("CONFIGURING".equals(sharedStorage.getState())) {
-            Thread.sleep(2000);
-            sharedStorage = oneandoneApi.getSharedStoragesApi().getShareStorage(sharedStorage.getId());
-        }
-
+        TestHelper.waitSharedStorageReady(sharedStorageResponse.getId());
         UpdateSharedStorageRequest request = new UpdateSharedStorageRequest();
         request.setName("javaSstorage" + rand.nextInt(900));
         request.setDescription("updated via java sdk");
         request.setSize(50);
 
-        SharedStorageResponse result = oneandoneApi.getSharedStoragesApi().updateShareStorage(sharedStorage.getId(), request);
+        SharedStorageResponse result = oneandoneApi.getSharedStoragesApi().updateShareStorage(sharedStorageResponse.getId(), request);
         assertNotNull(result);
         assertNotNull(result.getId());
-        SharedStorageResponse storageResult = oneandoneApi.getSharedStoragesApi().getShareStorage(sharedStorage.getId());
+        TestHelper.waitSharedStorageReady(sharedStorageResponse.getId());
+        SharedStorageResponse storageResult = oneandoneApi.getSharedStoragesApi().getShareStorage(sharedStorageResponse.getId());
         //check the storage is updated with new values
         assertNotNull(result.getId());
         assertEquals(result.getDescription(), storageResult.getDescription());
@@ -110,13 +91,15 @@ public class SharedStoragesTest {
     }
 
     @Test
-    public void getSharedStorageAccesss() throws RestClientException, IOException {
+    public void getSharedStorageAccesss() throws RestClientException, IOException, InterruptedException {
+        TestHelper.waitSharedStorageReady(sharedStorageResponse.getId());
         List<ShareStorageAccessResponse> result = oneandoneApi.getSharedStoragesApi().getShareStorageAccess();
         assertNotNull(result);
     }
 
     @Test
-    public void updateSharedStorageAccesss() throws RestClientException, IOException {
+    public void updateSharedStorageAccesss() throws RestClientException, IOException, InterruptedException {
+        TestHelper.waitSharedStorageReady(sharedStorageResponse.getId());
         UpdateSharedStorageAccessRequest request = new UpdateSharedStorageAccessRequest();
         request.setPasssword("test123!");
         List<ShareStorageAccessResponse> result = oneandoneApi.getSharedStoragesApi().updateShareStorageAccess(request);
@@ -125,15 +108,8 @@ public class SharedStoragesTest {
 
     @AfterClass
     public static void deleteSharedStorage() throws RestClientException, IOException, InterruptedException {
-        List<SharedStorageResponse> sharedStorages = oneandoneApi.getSharedStoragesApi().getShareStorages(0, 0, null, "javaStorage", null);
-        SharedStorageResponse sharedStorage;
-        if (sharedStorages.size() == 1) {
-            sharedStorage = sharedStorages.get(0);
-
-        } else {
-            sharedStorage = sharedStorages.get(rand.nextInt(sharedStorages.size() - 1));
-        }
-        SharedStorageResponse result = oneandoneApi.getSharedStoragesApi().deleteShareStorage(sharedStorage.getId());
+        TestHelper.waitSharedStorageReady(sharedStorageResponse.getId());
+        SharedStorageResponse result = oneandoneApi.getSharedStoragesApi().deleteShareStorage(sharedStorageResponse.getId());
 
         assertNotNull(result);
         //check the storage is being removed

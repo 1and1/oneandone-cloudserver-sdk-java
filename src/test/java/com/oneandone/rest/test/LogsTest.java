@@ -24,9 +24,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -41,7 +41,7 @@ public class LogsTest {
 
     @BeforeClass
     public static void getAllLogs() throws RestClientException, IOException {
-        oneandoneApi.setToken("apiToken");
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
         List<LogResponse> result = oneandoneApi.getLogsApi().getLogs(0, 0, null, null, null, Types.PeriodType.LAST_24H);
         logs = result;
         log = logs.get(0);

@@ -28,6 +28,8 @@ public class SharedStorageResponse {
     private int size;
     private String state;
     private String description;
+    @JsonProperty("datacenter_id")
+    private String datacenterId;
     @JsonProperty("cloudpanel_id")
     private String cloudpanelId;
     @JsonProperty("size_used")
@@ -95,6 +97,20 @@ public class SharedStorageResponse {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+    
+     /**
+     * Id of the data center
+     */
+    public String getDataCenter() {
+        return datacenterId;
+    }
+
+    /**
+     * @param datacenterId the data center to set
+     */
+    public void setDataCenter(String datacenterId) {
+        this.datacenterId = datacenterId;
     }
 
     /**

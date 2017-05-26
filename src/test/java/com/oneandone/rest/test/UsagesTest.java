@@ -37,8 +37,8 @@ public class UsagesTest {
 
     @BeforeClass
     public static void getAllUsages() throws RestClientException, IOException {
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
         List<UsageResponse> result = oneandoneApi.getUsagesApi().getUsages(0, 0, null, null, null, Types.PeriodType.LAST_24H);
-
         assertNotNull(result);
     }
 

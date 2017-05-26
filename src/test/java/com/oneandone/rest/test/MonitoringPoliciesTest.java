@@ -58,8 +58,10 @@ public class MonitoringPoliciesTest {
     static MonitoringPoliciesResponse monitoringPolicy;
 
     @BeforeClass
-    public static void getAllMonitoringPolicies() throws RestClientException, IOException {
-        oneandoneApi.setToken("apiToken");
+    public static void getAllMonitoringPolicies() throws RestClientException, IOException, InterruptedException {
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+        CreateMonitoringPolicy();
+        TestHelper.waitMonitoringPolicyReady(monitoringPolicy.getId());
         List<MonitoringPoliciesResponse> result = oneandoneApi.getMonitoringPoliciesApi().getMonitoringPolicies(0, 0, null, null, null);
         monitoringPolicies = result;
         monitoringPolicy = result.get(result.size() - 1);
@@ -70,13 +72,11 @@ public class MonitoringPoliciesTest {
     @Test
     public void getMonitoringPolicy() throws RestClientException, IOException, InterruptedException {
         MonitoringPoliciesResponse result = oneandoneApi.getMonitoringPoliciesApi().getMonitoringPolicy(monitoringPolicy.getId());
-
         assertNotNull(result);
 
     }
 
-    @Test
-    public void CreateMonitoringPolicy() throws RestClientException, IOException {
+    public static void CreateMonitoringPolicy() throws RestClientException, IOException {
 
         List<MPPorts> ports = new ArrayList<MPPorts>();
         MPPorts port = new MPPorts();
@@ -169,11 +169,11 @@ public class MonitoringPoliciesTest {
         request.setProcesses(processes);
         request.setThresholds(threshold);
 
-        MonitoringPoliciesResponse result = oneandoneApi.getMonitoringPoliciesApi().createMonitoringPolicy(request);
+        monitoringPolicy = oneandoneApi.getMonitoringPoliciesApi().createMonitoringPolicy(request);
 
-        assertNotNull(result);
+        assertNotNull(monitoringPolicy);
 
-        MonitoringPoliciesResponse monitoringPolicyResult = oneandoneApi.getMonitoringPoliciesApi().getMonitoringPolicy(result.getId());
+        MonitoringPoliciesResponse monitoringPolicyResult = oneandoneApi.getMonitoringPoliciesApi().getMonitoringPolicy(monitoringPolicy.getId());
 
         Assert.assertEquals(monitoringPolicyResult.isAgent(), request.isAgent());
         Assert.assertEquals(monitoringPolicyResult.getPorts().size(), request.getPorts().size());
@@ -308,7 +308,6 @@ public class MonitoringPoliciesTest {
     @AfterClass
     public static void deletePrivateNetwork() throws RestClientException, IOException, InterruptedException {
         MonitoringPoliciesResponse result = oneandoneApi.getMonitoringPoliciesApi().deleteMonitoringPolicy(monitoringPolicy.getId());
-
         assertNotNull(result);
         assertNotNull(result.getId());
     }

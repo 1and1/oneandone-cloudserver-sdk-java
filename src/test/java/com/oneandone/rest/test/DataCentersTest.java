@@ -21,9 +21,9 @@ import com.oneandone.sdk.OneAndOneApi;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
+import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -36,7 +36,7 @@ public class DataCentersTest {
     
     @BeforeClass
     public static void getDataCenters() throws RestClientException, IOException {
-        oneandoneApi.setToken("apiToken");
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
         List<DataCenter> result = oneandoneApi.getDataCenterApi().getDataCenters(0, 0, null, null, null);
         dataCenters = result;
         assertNotNull(result);

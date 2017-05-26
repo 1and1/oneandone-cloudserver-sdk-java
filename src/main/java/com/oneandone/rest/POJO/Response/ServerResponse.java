@@ -45,6 +45,7 @@ public class ServerResponse {
     private List<Alert> alerts;
     @JsonProperty("monitoring_policy_id")
     private ServerMonitoringPolicy monitoringPolicyId;
+    private DataCenter datacenter;
     @JsonProperty("monitoring_policy")
     private ServerMonitoringPolicy monitoringPolicy;
     @JsonProperty("private_networks")
@@ -258,6 +259,20 @@ public class ServerResponse {
      */
     public void setMonitoringPolicy(ServerMonitoringPolicy monitoringPolicy) {
         this.monitoringPolicy = monitoringPolicy;
+    }
+    
+    /**
+     * @return the DataCenter
+     */
+    public DataCenter getDataCenter() {
+        return datacenter;
+    }
+
+    /**
+     * @param datacenter the DataCenter to set
+     */
+    public void setMDataCenter(DataCenter datacenter) {
+        this.datacenter = datacenter;
     }
 
     /**

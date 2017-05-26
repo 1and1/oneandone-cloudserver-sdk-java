@@ -17,7 +17,7 @@ package com.oneandone.rest.test;
 
 import com.oneandone.rest.POJO.Response.PriceResponse;
 import com.oneandone.rest.client.RestClientException;
-import static com.oneandone.rest.test.TestTest.oneandoneApi;
+import com.oneandone.sdk.OneAndOneApi;
 import java.io.IOException;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
@@ -27,8 +27,14 @@ import org.junit.Test;
  * @author Ali
  */
 public class PricingTest {
- 
-     @Test
+
+    static OneAndOneApi oneandoneApi = new OneAndOneApi();
+
+    public PricingTest() {
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+    }
+
+    @Test
     public void getUserPermissions() throws RestClientException, IOException {
         PriceResponse result = oneandoneApi.getPriceApi().getPricing();
 

@@ -15,6 +15,7 @@
  */
 package com.oneandone.rest.test;
 
+import com.oneandone.rest.POJO.Requests.CreateUserRequest;
 import com.oneandone.rest.POJO.Requests.UpdateUserAPIRequest;
 import com.oneandone.rest.POJO.Requests.UpdateUserIPsRequest;
 import com.oneandone.rest.POJO.Requests.UserAPIKeyResponse;
@@ -43,14 +44,23 @@ public class UserOperationsTest {
 
     @BeforeClass
     public static void getUserAPIInfo() throws RestClientException, IOException {
-        oneandoneApi.setToken("apiToken");
-        //filter by a username you know exists
-        List<UserResponse> usersResult = oneandoneApi.getUsersApi().getUsers(0, 0, null, "03d60140.aliba", null);
-        users = usersResult;
-        user = users.get(0);
-
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+        
+        createUser();
         ApiResponse result = oneandoneApi.getUserOperationsApi().getUserAPIInfo(user.getId());
         assertNotNull(result);
+    }
+
+    public static void createUser() throws RestClientException, IOException {
+        String ranName = "javaTest" + rand.nextInt(999);
+        String ranPass = "Test" + rand.nextInt(999) + "!";
+        CreateUserRequest request = new CreateUserRequest();
+        request.setName(ranName);
+        request.setPassword(ranPass);
+        request.setEmail("test@tests.com");
+        request.setDescription("java test user");
+        user = oneandoneApi.getUsersApi().createUser(request);
+        assertNotNull(user);
     }
 
     @Test

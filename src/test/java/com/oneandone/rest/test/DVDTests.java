@@ -20,9 +20,9 @@ import com.oneandone.rest.client.RestClientException;
 import com.oneandone.sdk.OneAndOneApi;
 import java.io.IOException;
 import java.util.List;
+import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -35,6 +35,7 @@ public class DVDTests {
 
     @BeforeClass
     public static void getServerAppliances() throws RestClientException, IOException {
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
         List<DVDResponse> result = oneandoneApi.getDvdApi().getDVDs(0, 0, null, null, null);
         dvd = result;
         assertNotNull(result);

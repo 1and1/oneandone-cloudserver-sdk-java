@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author aliba
  */
-public class CreateLoadBalancerRequest extends BaseRequest{
+public class CreateLoadBalancerRequest extends BaseRequest {
 
     private String name;
     private String description;
@@ -41,6 +41,8 @@ public class CreateLoadBalancerRequest extends BaseRequest{
     private int persistenceTime;
     private LoadBalancerMethod method;
     private List<LoadBalancerRuleRequest> rules;
+    @JsonProperty("datacenter_id")
+    private String datacenterId;
 
     /**
      * @return the name
@@ -78,7 +80,8 @@ public class CreateLoadBalancerRequest extends BaseRequest{
     }
 
     /**
-     * @param health_check_test Required: Type of the health check. At the moment, HTTP is not allowed.
+     * @param health_check_test Required: Type of the health check. At the
+     * moment, HTTP is not allowed.
      */
     public void setHealthCheckTest(HealthCheckTestTypes health_check_test) {
         this.healthCheckTest = health_check_test;
@@ -92,7 +95,8 @@ public class CreateLoadBalancerRequest extends BaseRequest{
     }
 
     /**
-     * @param health_check_interval Required:Health check period in seconds"minimum": "5", "maximum": "300", "multipleOf": "1",
+     * @param health_check_interval Required:Health check period in
+     * seconds"minimum": "5", "maximum": "300", "multipleOf": "1",
      */
     public void setHealthCheckInterval(int health_check_interval) {
         this.healthCheckInterval = health_check_interval;
@@ -106,7 +110,8 @@ public class CreateLoadBalancerRequest extends BaseRequest{
     }
 
     /**
-     * @param health_check_path Not Required: Url to call for cheking. Required for HTTP health check."maxLength": 1000.
+     * @param health_check_path Not Required: Url to call for cheking. Required
+     * for HTTP health check."maxLength": 1000.
      */
     public void setHealthCheckPath(String health_check_path) {
         this.healthCheckpath = health_check_path;
@@ -120,7 +125,8 @@ public class CreateLoadBalancerRequest extends BaseRequest{
     }
 
     /**
-     * @param health_check_path_parser Not Required: Regular expression to check. Required for HTTP health check."maxLength": 64,
+     * @param health_check_path_parser Not Required: Regular expression to
+     * check. Required for HTTP health check."maxLength": 64,
      */
     public void setHealthCheckPathParser(String health_check_path_parser) {
         this.healthCheckPathParser = health_check_path_parser;
@@ -148,7 +154,9 @@ public class CreateLoadBalancerRequest extends BaseRequest{
     }
 
     /**
-     * @param persistence_time Required:Persistence time in seconds. Required if persistence is enabled."minimum": "30","maximum": "1200", "multipleOf": "1",
+     * @param persistence_time Required:Persistence time in seconds. Required if
+     * persistence is enabled."minimum": "30","maximum": "1200", "multipleOf":
+     * "1",
      */
     public void setPersistenceTime(int persistence_time) {
         this.persistenceTime = persistence_time;
@@ -182,4 +190,17 @@ public class CreateLoadBalancerRequest extends BaseRequest{
         this.rules = rules;
     }
 
+    /**
+     * Id of the data center
+     */
+    public String getDataCenter() {
+        return datacenterId;
+    }
+
+    /**
+     * @param datacenterId the data center to set
+     */
+    public void setDataCenter(String datacenterId) {
+        this.datacenterId = datacenterId;
+    }
 }

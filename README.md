@@ -52,10 +52,10 @@ The official Java library is available from the 1&1 GitHub account found [here](
 
 ### Authentication
 
-Set the authentication token and create the API client:
+Set the authentication token as an Environment Variable `OAO_TOKEN` and create the API client:
 
 ```
-oneandoneApi.setToken("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
 ```
 locate the OneAndOneAPIBase class and inside it locate the urlBase and set it to the URL
 as follows
@@ -64,12 +64,8 @@ as follows
 private String urlBase = "https://url";
 ```
 
-Or you can use the `root\config.properties` file and set both the URL and the token
+**Note** if the `urlBase` is not set it will default to `https://cloudpanel-api.1and1.com/v1`
 
-```
-apiurl=https://url
-apikey=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-```
 
 Refer to the [Examples](#examples) and [Operations](#operations) sections for additional information.
 
@@ -926,17 +922,21 @@ If any of the parameters `sort`, `query` or `fields` is set to an empty string, 
 
 **Create a VPN:**
 
-```CreateVPNRequest request = new CreateVPNRequest();
+```
+CreateVPNRequest request = new CreateVPNRequest();
 request.setName(vpnName);
 request.setDescription(vpnDescription);
 request.setDatacenterId(datacenter_id);
-VPNResponse result = oneandoneApi.getVpnApi().createVPN(request);```
+VPNResponse result = oneandoneApi.getVpnApi().createVPN(request);
+```
 
 **Modify a VPN:**
 
-```UpdateVPNRequest request = new UpdateVPNRequest();
+```
+UpdateVPNRequest request = new UpdateVPNRequest();
 request.setName(updatedName);
-VPNResponse result = oneandoneApi.getVpnApi().updateVPN(vpn_id, request);```
+VPNResponse result = oneandoneApi.getVpnApi().updateVPN(vpn_id, request);
+```
 
 **Delete a VPN:**
 
@@ -1004,8 +1004,7 @@ port.setAlertIf(Types.AlertIfType.RESPONDING);
 port.setEmailNotification(boolean);
 port.setProtocol(Types.ProtocolType.TCP);
 ports.add(port);
-```
-```
+
 //preparing list of ports to monitor
 List<MPProcesses> processes = new ArrayList<MPProcesses>();
 MPProcesses process = new MPProcesses();
@@ -1013,8 +1012,7 @@ process.setAlertIf(Types.ProcessAlertType.NOT_RUNNING);
 process.setEmailNotification(boolean);
 process.setProcess(processName);
 processes.add(process);
-```
-```
+
 Thresholds threshold = new Thresholds();
 // create all necesseray objects you want to monitor
 MPCpu cpu = new MPCpu();
@@ -1022,88 +1020,75 @@ MPRam ram = new MPRam();
 MPDisk disk = new MPDisk();
 MPInternalPing ping = new MPInternalPing();
 MPTransfer transfer = new MPTransfer();
-```
-```
+
 //cpu settings
 Critical critical = new Critical();
 critical.setAlert(boolean);
 critical.setValue(alertValue);
 cpu.setCritical(critical);
-```
-```
+
 Warning warning = new Warning();
 warning.setAlert(boolean);
 warning.setValue(alertValue);
 cpu.setWarning(warning);
-```
-```
+
 //ram settings
 Critical ramCritical = new Critical();
 ramCritical.setAlert(boolean);
 ramCritical.setValue(alertValue);
 ram.setCritical(ramCritical);
-```
-```
+
 Warning ramWarning = new Warning();
 ramWarning.setAlert(boolean);
 ramWarning.setValue(alertValue);
 ram.setWarning(warning);
-```
-```
+
 //disk settings
 DiskCritical diskCritical = new DiskCritical();
 diskCritical.setAlert(boolean);
 diskCritical.setValue(alertValue);
 disk.setCritical(diskCritical);
-```
-```
+
 DiskWarning diskWarning = new DiskWarning();
 diskWarning.setAlert(boolean);
 diskWarning.setValue(alertValue);
 disk.setWarning(diskWarning);
-```
-```
+
 //internal ping settings
 InternalPingCritical internalPingCritical = new InternalPingCritical();
 internalPingCritical.setAlert(boolean);
 internalPingCritical.setValue(alertValue);
 ping.setCritical(internalPingCritical);
-```
-```
+
 InternalPingWarning internalPingWarning = new InternalPingWarning();
 internalPingWarning.setAlert(boolean);
 internalPingWarning.setValue(alertValue);
 ping.setWarning(internalPingWarning);
-```
-```
+
 //transferSettings
 TransferCritical transferCritical = new TransferCritical();
 transferCritical.setAlert(boolean);
 transferCritical.setValue(alertValue);
 transfer.setCritical(transferCritical);
-```
-```
+
 Warning transferWarning = new Warning();
 transferWarning.setAlert(boolean);
 transferWarning.setValue(alertValue);
 transfer.setWarning(transferWarning);
-```
-```
+
 threshold.setCpu(cpu);
 threshold.setRam(ram);
 threshold.setDisk(disk);
 threshold.setInternalPing(ping);
 threshold.setTransfer(transfer);
-```
-```
+
 CreateMonitoringPolictRequest request = new CreateMonitoringPolictRequest();
 request.setName(policyName);
 request.setAgent(boolean);
 request.setPorts(ports);
 request.setProcesses(processes);
 request.setThresholds(threshold);
-```
-```
+
 MonitoringPoliciesResponse result = oneandoneApi.getMonitoringPoliciesApi().createMonitoringPolicy(request);
 ```
 All fields, except `Description`, are required. `AlertIf` property accepts values `"RESPONDING"`/`"NOT_RESPONDING"` for ports, and `"RUNNING"`/`"NOT_RUNNING"` for processes.
@@ -1114,8 +1099,7 @@ All fields, except `Description`, are required. `AlertIf` property accepts value
 ```
 UpdateMonitoringPolicyRequest request = new UpdateMonitoringPolicyRequest();
 request.setName(name);
-```
-```
+
 Thresholds threshold = new Thresholds();
 //setting warnings levels
 MPCpu cpu = new MPCpu();
@@ -1123,80 +1107,68 @@ MPRam ram = new MPRam();
 MPDisk disk = new MPDisk();
 MPInternalPing ping = new MPInternalPing();
 MPTransfer transfer = new MPTransfer();
-```
-```
+
 //cpu settings
 Critical critical = new Critical();
 critical.setAlert(boolean);
 critical.setValue(value);
 cpu.setCritical(critical);
-```
-```
+
 Warning warning = new Warning();
 warning.setAlert(boolean);
 warning.setValue(value);
 cpu.setWarning(warning);
-```
-```
+
 //ram settings
 Critical ramCritical = new Critical();
 ramCritical.setAlert(boolean);
 ramCritical.setValue(value);
 ram.setCritical(ramCritical);
-```
-```
+
 Warning ramWarning = new Warning();
 ramWarning.setAlert(boolean);
 ramWarning.setValue(value);
 ram.setWarning(warning);
-```
-```
+
 //disk settings
 DiskCritical diskCritical = new DiskCritical();
 diskCritical.setAlert(boolean);
 diskCritical.setValue(value);
 disk.setCritical(diskCritical);
-```
-```
+
 DiskWarning diskWarning = new DiskWarning();
 diskWarning.setAlert(boolean);
 diskWarning.setValue(value);
 disk.setWarning(diskWarning);
-```
-```
+
 //internal ping settings
 InternalPingCritical internalPingCritical = new InternalPingCritical();
 internalPingCritical.setAlert(boolean);
 internalPingCritical.setValue(value);
 ping.setCritical(internalPingCritical);
-```
-```
+
 InternalPingWarning internalPingWarning = new InternalPingWarning();
 internalPingWarning.setAlert(boolean);
 internalPingWarning.setValue(value);
 ping.setWarning(internalPingWarning);
-```
-```
+
 //transferSettings
 TransferCritical transferCritical = new TransferCritical();
 transferCritical.setAlert(boolean);
 transferCritical.setValue(value);
 transfer.setCritical(transferCritical);
-```
-```
+
 Warning transferWarning = new Warning();
 transferWarning.setAlert(boolean);
 transferWarning.setValue(value);
 transfer.setWarning(transferWarning);
-```
-```
+
 threshold.setCpu(cpu);
 threshold.setRam(ram);
 threshold.setDisk(disk);
 threshold.setInternalPing(ping);
 threshold.setTransfer(transfer);
-```
-```
+
 request.setThresholds(threshold);
 MonitoringPoliciesResponse result = oneandoneApi.getMonitoringPoliciesApi().updateMonitoringPolicy(monitoringPolicy.getId(), request);
 ```
@@ -1227,20 +1199,17 @@ port.setEmailNotification(boolean);
 port.setPort(boolean);
 port.setProtocol(Types.ProtocolType.TCP);
 ports.add(port);
-```
-```
+
 MPPorts portA = new MPPorts();
 portA.setAlertIf(Types.AlertIfType.RESPONDING);
 portA.setEmailNotification(boolean);
 portA.setPort(portNumber);
 portA.setProtocol(Types.ProtocolType.TCP);
 ports.add(portA);
-```
-```
+
 CreateMPPortsRequest request = new CreateMPPortsRequest();
 request.setPorts(ports);
-```
-```
+
 MonitoringPoliciesResponse reuslt = oneandoneApi.getMonitoringPoliciesPortsApi().createMonitoringPolicyPort(request, monitoringPolicyId);
 ```
 Port properties are mandatory.
@@ -1253,12 +1222,10 @@ port.setAlertIf(Types.AlertIfType.RESPONDING);
 port.setEmailNotification(boolean);
 port.setPort(portNumber);
 port.setProtocol(Types.ProtocolType.TCP);
-```
-```
+
 UpdateMPPortsRequest request = new UpdateMPPortsRequest();
 request.setPorts(port);
-```
-```
+
 MonitoringPoliciesResponse result = oneandoneApi.getMonitoringPoliciesPortsApi().updateMonitoringPolicyPort(request, monitoringPolicyId, monitoringPolicyPortsId);
 ```
 *Note:* `Protocol` and `Port` cannot be changed.
@@ -1287,22 +1254,18 @@ MPProcesses process = new MPProcesses();
 process.setAlertIf(Types.ProcessAlertType.RUNNING);
 process.setEmailNotification(boolean);
 process.setProcess(processName);
-```
-```
+
 processes.add(process);
-```
-```
+
 MPProcesses processA = new MPProcesses();
 processA.setAlertIf(Types.ProcessAlertType.RUNNING);
 processA.setEmailNotification(boolean);
 processA.setProcess(processName);
 processes.add(processA);
-```
-```
+
 CreateMPProcessesRequest request = new CreateMPProcessesRequest();
 request.setProcesses(processes);
-```
-```
+
 MonitoringPoliciesResponse reuslt = oneandoneApi.getMonitoringPoliciesProcessesApi().createMonitoringPolicyProcess(request, monitoringPolicyId);
 ```
 All properties of the `MonitoringProcess` instance are required.
@@ -1315,12 +1278,10 @@ MPProcesses process = new MPProcesses();
 process.setAlertIf(Types.ProcessAlertType.RUNNING);
 process.setEmailNotification(boolean);
 process.setProcess(processName);
-```
-```
+
 UpdateMPProcessesRequest request = new UpdateMPProcessesRequest();
 request.setProcesses(process);
-```
-```
+
 MonitoringPoliciesResponse result = oneandoneApi.getMonitoringPoliciesProcessesApi().updateMonitoringPolicyProcess(request, monitoringPolicyId, monitoringPolicyProcessesId);
 ```
 
@@ -1496,23 +1457,29 @@ If any of the parameters `sort`, `query` or `fields` is set to an empty string, 
 
 **Create a role:**
 
-```CreateRoleRequest request = new CreateRoleRequest();
+```
+CreateRoleRequest request = new CreateRoleRequest();
 request.setName(name);
-RoleResponse result = oneandoneApi.getRoleApi().createRole(request);```
+RoleResponse result = oneandoneApi.getRoleApi().createRole(request);
+```
 
 **Clone a role:**
 
-```CloneRoleRequest request = new CloneRoleRequest();
+```
+CloneRoleRequest request = new CloneRoleRequest();
 request.setName(name);
-RoleResponse result = oneandoneApi.getRoleApi().CloneRole(request, role_id);```
+RoleResponse result = oneandoneApi.getRoleApi().CloneRole(request, role_id);
+```
 
 **Modify a role:**
 
-```UpdateRoleRequest request = new UpdateRoleRequest();
+```
+UpdateRoleRequest request = new UpdateRoleRequest();
 request.setName(name);
 request.setDescription(description);
 request.setState(Types.RoleState.ACTIVE);
-RoleResponse result = oneandoneApi.getRoleApi().updateRole(role_id, request);```
+RoleResponse result = oneandoneApi.getRoleApi().updateRole(role_id, request);
+```
 
 `ACTIVE` and `DISABLE` are valid values for the state.
 
@@ -1526,14 +1493,18 @@ RoleResponse result = oneandoneApi.getRoleApi().updateRole(role_id, request);```
 
 **Modify a role's permissions:**
 
-```UpdatePermissionsRequest request = new UpdatePermissionsRequest();
-RoleResponse response = oneandoneApi.getPermissionsApi().updateRolePermissions(role_id, request);```
+```
+UpdatePermissionsRequest request = new UpdatePermissionsRequest();
+RoleResponse response = oneandoneApi.getPermissionsApi().updateRolePermissions(role_id, request);
+```
 
 **Assign users to a role:**
 
-```AssignUserRoleRequest request = new AssignUserRoleRequest();
+```
+AssignUserRoleRequest request = new AssignUserRoleRequest();
 request.setUsers(usersList);
-RoleResponse result = oneandoneApi.getRoleUsersApi().createRoleUser(request, role_id);```
+RoleResponse result = oneandoneApi.getRoleUsersApi().createRoleUser(request, role_id);
+```
 
 `usersList` is a String List of user ID's.
 
@@ -1652,7 +1623,7 @@ The example below is a main class in java that creates an IP, firewall policy, a
 
 After the server is created we assign the firewall policy and the load balancer to the server and in the end we clean everything out.
 
-```
+```java
 public class main {
 
     static OneAndOneApi oneandoneApi = new OneAndOneApi();
@@ -1873,8 +1844,8 @@ public class main {
                 Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, firewallPolicyex);
             }
         }
-    }
-}
+    }}
+
 ```
 
 
