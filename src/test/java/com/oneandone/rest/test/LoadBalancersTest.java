@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.Random;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -42,27 +42,36 @@ public class LoadBalancersTest {
 
     static OneAndOneApi oneandoneApi = new OneAndOneApi();
     static Random rand = new Random();
-    static List<LoadBalancerResponse> loadBalancers;
+    static LoadBalancerResponse loadBalancer;
+
+    @BeforeClass
+    public static void testInit() throws RestClientException, IOException {
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+        createLoadBalancer();
+    }
+
+    @AfterClass
+    public static void testCleanup() throws RestClientException, IOException, InterruptedException {
+        LoadBalancerResponse result = oneandoneApi.getLoadBalancerApi().deleteLoadBalancer(loadBalancer.getId());
+        assertNotNull(result);
+    }
 
     @BeforeClass
     public static void getAllLoadBalancers() throws RestClientException, IOException {
-        oneandoneApi.setToken("apiToken");
         List<LoadBalancerResponse> result = oneandoneApi.getLoadBalancerApi().getLoadBalancers(0, 0, null, null, null);
-        loadBalancers = result;
         assertNotNull(result);
     }
 
     @Test
     public void getLoadBalancer() throws RestClientException, IOException {
-        LoadBalancerResponse result = oneandoneApi.getLoadBalancerApi().getLoadBalancer(loadBalancers.get(0).getId());
+        LoadBalancerResponse result = oneandoneApi.getLoadBalancerApi().getLoadBalancer(loadBalancer.getId());
 
         assertNotNull(result);
         assertNotNull(result.getId());
 
     }
 
-    @Test
-    public void createLoadBalancer() throws RestClientException, IOException {
+    public static void createLoadBalancer() throws RestClientException, IOException {
         CreateLoadBalancerRequest request = new CreateLoadBalancerRequest();
 
         request.setDescription("javaLBDesc");
@@ -83,28 +92,14 @@ public class LoadBalancersTest {
         rules.add(ruleA);
 
         request.setRules(rules);
-        LoadBalancerResponse result = oneandoneApi.getLoadBalancerApi().createLoadBalancer(request);
-        assertNotNull(result);
+        loadBalancer = oneandoneApi.getLoadBalancerApi().createLoadBalancer(request);
+        assertNotNull(loadBalancer);
 
     }
 
     @Test
     public void updateLoadBalancer() throws RestClientException, IOException, InterruptedException {
-        if (loadBalancers.isEmpty()) {
-            return;
-        }
-        LoadBalancerResponse loadBalancer = null;
-        for (LoadBalancerResponse balancer : loadBalancers) {
-            if (!"ACTIVE".equals(balancer.getState())) {
-                continue;
-            }
-            if (!balancer.getName().contains("java")) {
-                continue;
-            } else {
-                loadBalancer = balancer;
-                break;
-            }
-        }
+        TestHelper.waitLoadBalancerReady(loadBalancer.getId());
 
         UpdateLoadBalancerRequest request = new UpdateLoadBalancerRequest();
         request.setHealthCheckInterval(100);
@@ -125,26 +120,4 @@ public class LoadBalancersTest {
         Assert.assertEquals(updated.getHealthCheckTest(), HealthCheckTestTypes.TCP);
         Assert.assertEquals(updated.getMethod(), LoadBalancerMethod.ROUND_ROBIN);
     }
-
-    @AfterClass
-    public static void deleteLoadBalancer() throws RestClientException, IOException, InterruptedException {
-        if (loadBalancers.isEmpty()) {
-            return;
-        }
-        LoadBalancerResponse loadBalancer = null;
-        for (LoadBalancerResponse balancer : loadBalancers) {
-            if (!balancer.getName().contains("java")) {
-                continue;
-            } else {
-                loadBalancer = balancer;
-                break;
-            }
-        }
-        if (loadBalancer != null) {
-            LoadBalancerResponse result = oneandoneApi.getLoadBalancerApi().deleteLoadBalancer(loadBalancer.getId());
-
-            assertNotNull(result);
-        }
-    }
-
 }

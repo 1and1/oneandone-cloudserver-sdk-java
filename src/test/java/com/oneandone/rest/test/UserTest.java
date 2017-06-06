@@ -26,9 +26,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -43,22 +43,24 @@ public class UserTest {
 
     @BeforeClass
     public static void getAllUsers() throws RestClientException, IOException {
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+        createUser();
         //filter by a username you know exists
-        List<UserResponse> result = oneandoneApi.getUsersApi().getUsers(0, 0, null, "03d60140.aliba", null);
+        List<UserResponse> result = oneandoneApi.getUsersApi().getUsers(0, 0, null, null, null);
         users = result;
         assertNotNull(result);
     }
 
     @Test
     public void getUser() throws RestClientException, IOException {
-        UserResponse result = oneandoneApi.getUsersApi().getUser(users.get(0).getId());
+        UserResponse result = oneandoneApi.getUsersApi().getUser(user.getId());
         user = result;
 
         assertNotNull(result);
         assertNotNull(result.getId());
 
     }
-    
+
     @Test
     public void getUserPermissions() throws RestClientException, IOException {
         PermissionsResponse result = oneandoneApi.getUsersApi().getUserPermissions();
@@ -66,8 +68,7 @@ public class UserTest {
         assertNotNull(result);
     }
 
-    @Test
-    public void createUser() throws RestClientException, IOException {
+    public static void createUser() throws RestClientException, IOException {
         String ranName = "javaTest" + rand.nextInt(999);
         String ranPass = "Test" + rand.nextInt(999) + "!";
         CreateUserRequest request = new CreateUserRequest();
@@ -75,10 +76,8 @@ public class UserTest {
         request.setPassword(ranPass);
         request.setEmail("test@tests.com");
         request.setDescription("java test user");
-        UserResponse result = oneandoneApi.getUsersApi().createUser(request);
-
-        assertNotNull(result);
-
+        user = oneandoneApi.getUsersApi().createUser(request);
+        assertNotNull(user);
     }
 
     @Test

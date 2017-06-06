@@ -17,14 +17,12 @@
 package com.oneandone.rest.client;
 
 import java.net.URI;
-import org.apache.http.annotation.NotThreadSafe;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 
 /**
  *
  * @author aliba
  */
-@NotThreadSafe
 class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
     public static final String METHOD_NAME = "DELETE";
     public String getMethod() { return METHOD_NAME; }

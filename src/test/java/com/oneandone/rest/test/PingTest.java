@@ -17,7 +17,7 @@ package com.oneandone.rest.test;
 
 import com.oneandone.rest.POJO.Response.Types;
 import com.oneandone.rest.client.RestClientException;
-import static com.oneandone.rest.test.TestTest.oneandoneApi;
+import com.oneandone.sdk.OneAndOneApi;
 import java.io.IOException;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
@@ -28,13 +28,19 @@ import org.junit.Test;
  */
 public class PingTest {
 
+    static OneAndOneApi oneandoneApi = new OneAndOneApi();
+
+    public PingTest() {
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+    }
+
     @Test
     public void pingApi() throws RestClientException, IOException {
         Types.APIPingState result = oneandoneApi.getPingApi().pingApi();
         assertNotNull(result);
     }
-    
-      @Test
+
+    @Test
     public void pingApiAuth() throws RestClientException, IOException {
         Types.APIPingState result = oneandoneApi.getPingApi().pingApiAuth();
         assertNotNull(result);

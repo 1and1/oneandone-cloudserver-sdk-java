@@ -12,3 +12,48 @@
 hs_err_pid*
 /target/surefire-reports/*.xml
 /target/surefire-reports/*.txt
+
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
+!/.mvn/wrapper/maven-wrapper.jar
+
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# NetBeans specific #
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# Class Files #
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+/nb-configuration.xml
+/nbactions.xml
+/src/test/java/com/oneandone/rest/test/PrivateNetworkServerTest.java
+/src/test/java/com/oneandone/rest/test/RolePermissionsTest.java
+/src/test/java/com/oneandone/rest/test/RoleUsersTest.java
+/src/test/java/com/oneandone/rest/test/TestTest.java
+/target
+/nbproject

@@ -36,6 +36,7 @@ public class ServerAppliancesTest {
 
     @BeforeClass
     public static void getServerAppliances() throws RestClientException, IOException {
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
         List<ServerAppliancesResponse> result = oneandoneApi.getServerAppliancesApi().getServerAppliances(0, 0, null, null, null);
         appliances = result;
         assertNotNull(result);

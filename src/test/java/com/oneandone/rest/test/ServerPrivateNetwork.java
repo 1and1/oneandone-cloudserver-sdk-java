@@ -15,19 +15,22 @@
  */
 package com.oneandone.rest.test;
 
-import com.oneandone.rest.client.RestClientException;
-import com.oneandone.rest.POJO.Response.PrivateNetwork;
+import com.oneandone.rest.POJO.Requests.CreatePrivateNetworkRequest;
 import com.oneandone.rest.POJO.Requests.IdRequest;
+import com.oneandone.rest.POJO.Response.PrivateNetwork;
 import com.oneandone.rest.POJO.Response.PrivateNetworksResponse;
 import com.oneandone.rest.POJO.Response.ServerResponse;
-import com.oneandone.rest.POJO.Response.Types.ServerState;
+import com.oneandone.rest.client.RestClientException;
+import static com.oneandone.rest.test.TestHelper.CreateTestServer;
 import com.oneandone.sdk.OneAndOneApi;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import org.junit.Test;
+import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *
@@ -35,96 +38,69 @@ import org.junit.BeforeClass;
  */
 public class ServerPrivateNetwork {
 
-    String PrivatenetworkId = "";
     static OneAndOneApi oneandoneApi = new OneAndOneApi();
     static Random rand = new Random();
     static String serverId;
     static String ipId;
     static List<ServerResponse> servers;
     static ServerResponse server;
+    static List<String> ids = new ArrayList<String>();
+    static PrivateNetworksResponse pn;
 
     @BeforeClass
-    public static void getServerPrivateNetworks() throws RestClientException, IOException, InterruptedException {
-        oneandoneApi.setToken("apiToken");
-        servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "java", null);
-        if (servers.size() == 1) {
-            serverId = servers.get(0).getId();
-        } else {
-            serverId = servers.get(rand.nextInt(servers.size() - 1)).getId();
+    public static void testInit() throws RestClientException, IOException, InterruptedException {
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+        serverId = CreateTestServer("servers PN test", false).getId();
+        //creating three servers, Private networks requires 3 servers to be created
+        for (int i = 0; i < 2; i++) {
+            ids.add(CreateTestServer("servers PN test " + i, false).getId());
         }
+        CreatePrivateNetworkRequest request = new CreatePrivateNetworkRequest();
+        request.setDescription("desc");
+        request.setName("javaPN" + rand.nextInt(200));
+        request.setNetworkAddress("192.168.1.0");
+        request.setSubnetMask("255.255.255.0");
+        TestHelper.waitServerReady(serverId);
+        pn = oneandoneApi.getPrivateNetworkApi().createPrivateNetwork(request);
+        TestHelper.waitPNReady(pn.getId());
+
+        //add server to the private network
+        IdRequest pnRequest = new IdRequest();
+        pnRequest.setId(pn.getId());
+        ServerResponse pnResult = oneandoneApi.getServerApi().createPrivateNetwork(pnRequest, serverId);
+        assertNotNull(pnResult);
+    }
+
+    @AfterClass
+    public static void cleanupTest() throws RestClientException, IOException, InterruptedException {
+        if (pn != null) {
+            TestHelper.waitPNReady(pn.getId());
+            TestHelper.waitServerReady(serverId);
+            deletePrivateNetwork();
+            TestHelper.waitPNReady(pn.getId());
+            oneandoneApi.getPrivateNetworkApi().deletePrivateNetwork(pn.getId());
+        }
+        for (int i = 0; i < 3; i++) {
+            TestHelper.waitServerReady(ids.get(i));
+            oneandoneApi.getServerApi().deleteServer(ids.get(i), false);
+        }
+    }
+
+    @Test
+    public void getServerPrivateNetworks() throws RestClientException, IOException, InterruptedException {
         List<com.oneandone.rest.POJO.Response.ServerPrivateNetwork> result = oneandoneApi.getServerApi().getPrivateNetworks(serverId);
         assertNotNull(result);
     }
 
     @Test
     public void getServerPrivateNetwork() throws RestClientException, IOException, InterruptedException {
-        servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "java", null);
-        if (servers.size() == 1) {
-            serverId = servers.get(0).getId();
-        } else {
-            serverId = servers.get(rand.nextInt(servers.size() - 1)).getId();
-        }
-
-        for (ServerResponse item : servers) {
-            Thread.sleep(1000);
-            server = oneandoneApi.getServerApi().getServer(item.getId());
-            if (server.getPrivateNetworks() != null && server.getPrivateNetworks().size() > 0) {
-                PrivateNetwork result = oneandoneApi.getServerApi().getPrivateNetwork(server.getId(), server.getPrivateNetworks().get(0).getId());
-                assertNotNull(result);
-                break;
-            }
-        }
+        PrivateNetwork result = oneandoneApi.getServerApi().getPrivateNetwork(serverId, pn.getId());
+        assertNotNull(result);
     }
 
-    @Test
-    public void createPrivateNetwork() throws RestClientException, IOException, InterruptedException {
-        servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, null, null);
-        List<PrivateNetworksResponse> networks = oneandoneApi.getPrivateNetworkApi().getPrivateNetworks(0, 0, null, null, null);
-        if (networks.isEmpty()) {
-            return;
-        }
-        PrivatenetworkId = networks.get(0).getId();
-        for (ServerResponse item : servers) {
-            Thread.sleep(1000);
-            server = oneandoneApi.getServerApi().getServer(item.getId());
-            if (server.getStatus().getState() == ServerState.POWERING_ON || server.getSnapshot() != null) {
-                continue;
-            }
-            IdRequest request = new IdRequest();
-            request.setId(PrivatenetworkId);
-            ServerResponse result = oneandoneApi.getServerApi().createPrivateNetwork(request, serverId);
-            assertNotNull(result);
-            break;
-        }
-    }
-
-    @Test
-    public void deletePrivateNetwork() throws RestClientException, IOException, InterruptedException {
-        servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, null, null);
-        String curprivateNetworkId = "";
-        boolean BreakAll = false;
-        for (ServerResponse item : servers) {
-            if (BreakAll) {
-                break;
-            }
-            Thread.sleep(1000);
-            server = oneandoneApi.getServerApi().getServer(item.getId());
-            //this check is here becuase i get the following error when trying to delete netwotk on ubuntu os
-            //Network interface cannot be hot removed in Ubuntu virtual machines
-            if (server.getImage().getName().contains("ub") || server.getSnapshot() != null || server.getStatus().getPercent() > 0) {
-                continue;
-            }
-            if (server.getPrivateNetworks() != null && server.getPrivateNetworks().size() > 0) {
-                curprivateNetworkId = server.getPrivateNetworks().get(0).getId();
-                PrivateNetwork currentPN = oneandoneApi.getServerApi().getPrivateNetwork(item.getId(), curprivateNetworkId);
-                while (currentPN.getState() == "CONFIGURING") {
-                    Thread.sleep(1000);
-                    currentPN = oneandoneApi.getServerApi().getPrivateNetwork(item.getId(), curprivateNetworkId);
-                }
-                ServerResponse result = oneandoneApi.getServerApi().deletePrivateNetwork(item.getId(), curprivateNetworkId);
-                assertNotNull(result);
-                assertNotNull(result.getId());
-            }
-        }
+    public static void deletePrivateNetwork() throws RestClientException, IOException, InterruptedException {
+        ServerResponse result = oneandoneApi.getServerApi().deletePrivateNetwork(serverId, pn.getId());
+        assertNotNull(result);
+        assertNotNull(result.getId());
     }
 }

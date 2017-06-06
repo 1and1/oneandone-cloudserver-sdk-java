@@ -24,7 +24,7 @@ public class OneAndOneApi {
 
     public OneAndOneApi() {
         Properties props = ConfigReader.getProperties();
-        setToken(props.getProperty("apikey"));
+        setToken(System.getenv("OAO_TOKEN"));
 
         this.imageApi = new ImageApi();
         this.serverApi = new ServerApi();

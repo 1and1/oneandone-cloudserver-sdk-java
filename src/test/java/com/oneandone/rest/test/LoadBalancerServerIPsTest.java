@@ -16,11 +16,15 @@
 package com.oneandone.rest.test;
 
 import com.oneandone.rest.POJO.Requests.AssignLoadBalancerServerIpsRequest;
+import com.oneandone.rest.POJO.Requests.CreateLoadBalancerRequest;
+import com.oneandone.rest.POJO.Requests.LoadBalancerRuleRequest;
 import com.oneandone.rest.POJO.Response.LoadBalancerResponse;
 import com.oneandone.rest.POJO.Response.LoadBalancerServerIpsResponse;
 import com.oneandone.rest.POJO.Response.ServerIPs;
-import com.oneandone.rest.POJO.Response.ServerResponse;
+import com.oneandone.rest.POJO.Response.Types;
 import com.oneandone.rest.client.RestClientException;
+import static com.oneandone.rest.test.FirewallPolicyServersTest.serverId;
+import static com.oneandone.rest.test.TestHelper.CreateTestServer;
 import com.oneandone.sdk.OneAndOneApi;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,84 +46,77 @@ public class LoadBalancerServerIPsTest {
     static List<LoadBalancerResponse> loadbalancers;
     static LoadBalancerResponse loadBalancer;
     static List<LoadBalancerServerIpsResponse> serverIps;
+    static ServerIPs serverIP;
 
     @BeforeClass
-    public static void getAllLoadBalancerServerIPs() throws RestClientException, IOException {
-        oneandoneApi.setToken("apiToken");
-        List<LoadBalancerResponse> loadBalancers = oneandoneApi.getLoadBalancerApi().getLoadBalancers(0, 0, null, "java", null);
-        loadbalancers = loadBalancers;
-        String balancerId = "";
-        if (loadbalancers.isEmpty()) {
-            return;
-        }
-        for (LoadBalancerResponse response : loadbalancers) {
-            if (!response.getServerIps().isEmpty()) {
-                balancerId = response.getId();
-                break;
-            }
-        }
-        if (!balancerId.isEmpty()) {
-            loadBalancer = oneandoneApi.getLoadBalancerApi().getLoadBalancer(balancerId);
-            List<LoadBalancerServerIpsResponse> result = oneandoneApi.getLoadBalancerServerApi().getLoadBalancerServerIPs(loadBalancer.getId());
-            serverIps = result;
-            assertNotNull(result);
-        }
+    public static void getAllLoadBalancerServerIPs() throws RestClientException, IOException, InterruptedException {
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+        createLoadBalancer();
+        serverId = CreateTestServer("Loadbalancer server test", true).getId();
+        createLoadBalancerServerIP();
+        TestHelper.waitLoadBalancerReady(loadBalancer.getId());
+        List<LoadBalancerServerIpsResponse> result = oneandoneApi.getLoadBalancerServerApi().getLoadBalancerServerIPs(loadBalancer.getId());
+        serverIps = result;
+        assertNotNull(result);
+
+    }
+
+    public static void createLoadBalancer() throws RestClientException, IOException {
+        CreateLoadBalancerRequest request = new CreateLoadBalancerRequest();
+
+        request.setDescription("javaLBDesc");
+        request.setName("javaLBTest" + rand.nextInt(300));
+        request.setHealthCheckInterval(1);
+        request.setPersistence(true);
+        request.setPersistenceTime(30);
+        request.setHealthCheckTest(Types.HealthCheckTestTypes.NONE);
+        request.setMethod(Types.LoadBalancerMethod.ROUND_ROBIN);
+
+        List<LoadBalancerRuleRequest> rules = new ArrayList<LoadBalancerRuleRequest>();
+        LoadBalancerRuleRequest ruleA = new LoadBalancerRuleRequest();
+
+        ruleA.setPortBalancer(80);
+        ruleA.setProtocol(Types.LBRuleProtocol.TCP);
+        ruleA.setSource("0.0.0.0");
+        ruleA.setPortServer(80);
+        rules.add(ruleA);
+
+        request.setRules(rules);
+        loadBalancer = oneandoneApi.getLoadBalancerApi().createLoadBalancer(request);
+        assertNotNull(loadBalancer);
+
     }
 
     @Test
     public void getLoadBalancerServerIP() throws RestClientException, IOException {
-        if (serverIps != null && !serverIps.isEmpty()) {
-            if (loadBalancer == null) {
-                loadBalancer = loadbalancers.get(rand.nextInt(loadbalancers.size() - 1));
-            }
-            LoadBalancerServerIpsResponse result = oneandoneApi.getLoadBalancerServerApi().getLoadBalancerServerIP(loadBalancer.getId(), serverIps.get(0).getId());
+        LoadBalancerServerIpsResponse result = oneandoneApi.getLoadBalancerServerApi().getLoadBalancerServerIP(loadBalancer.getId(), serverIps.get(0).getId());
 
-            assertNotNull(result);
-            assertNotNull(result.getId());
-        }
+        assertNotNull(result);
+        assertNotNull(result.getId());
     }
 
-    @Test
-    public void createLoadBalancerServerIP() throws RestClientException, IOException {
-        List<ServerResponse> servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "test", null);
+    public static void createLoadBalancerServerIP() throws RestClientException, IOException, InterruptedException {
         AssignLoadBalancerServerIpsRequest request = new AssignLoadBalancerServerIpsRequest();
-        ServerIPs serverIP = null;
-        if (!servers.isEmpty()) {
-            for (ServerResponse curServer : servers) {
-                if (curServer.getIps() != null && !curServer.getIps().isEmpty()) {
-                    serverIP = curServer.getIps().get(0);
-                    break;
-                }
-            }
-            if (serverIP != null) {
-                List<String> ipToAdd = new ArrayList<String>();
-                ipToAdd.add(serverIP.getId());
-                request.setServerIps(ipToAdd);
-                int randomIndex=rand.nextInt(loadbalancers.size());
-                if (loadBalancer == null) {
-                    loadBalancer = loadbalancers.get(randomIndex);
-                }
-                LoadBalancerResponse result = oneandoneApi.getLoadBalancerServerApi().createLoadBalancerServerIP(request, loadBalancer.getId());
-                assertNotNull(result);
-                assertNotNull(result.getId());
-            }
-        }
+        serverIP = oneandoneApi.getServerApi().getServer(serverId).getIps().get(0);
+        List<String> ipToAdd = new ArrayList<String>();
+        ipToAdd.add(serverIP.getId());
+        request.setServerIps(ipToAdd);
+        LoadBalancerResponse result = oneandoneApi.getLoadBalancerServerApi().createLoadBalancerServerIP(request, loadBalancer.getId());
+        assertNotNull(result);
+        assertNotNull(result.getId());
+        TestHelper.waitLoadBalancerReady(loadBalancer.getId());
     }
 
     @AfterClass
     public static void deleteLoadBalancerServerIP() throws RestClientException, IOException, InterruptedException {
-        for (LoadBalancerResponse balancer : loadbalancers) {
-            if (balancer.getServerIps() != null && !balancer.getServerIps().isEmpty()) {
-                loadBalancer = balancer;
-                break;
-            }
+        LoadBalancerResponse result = oneandoneApi.getLoadBalancerServerApi().deleteLoadBalancerServerIP(loadBalancer.getId(), serverIps.get(0).getId());
+        assertNotNull(result);
+        assertNotNull(result.getId());
+        if (serverId != null) {
+            TestHelper.waitServerReady(serverId);
+            oneandoneApi.getServerApi().deleteServer(serverId, false);
         }
-
-        if (loadBalancer != null && loadBalancer.getServerIps() != null && loadBalancer.getServerIps().size() > 0) {
-            LoadBalancerResponse result = oneandoneApi.getLoadBalancerServerApi().deleteLoadBalancerServerIP(loadBalancer.getId(), loadBalancer.getServerIps().get(0).getId());
-            assertNotNull(result);
-            assertNotNull(result.getId());
-        }
+        oneandoneApi.getLoadBalancerApi().deleteLoadBalancer(loadBalancer.getId());
     }
 
 }

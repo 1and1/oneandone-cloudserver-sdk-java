@@ -29,8 +29,12 @@
  */
 package com.oneandone.rest.client;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
@@ -41,24 +45,13 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.lang.reflect.InvocationTargetException;
-import org.apache.http.HttpHost;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 
 public abstract class AbstractRestClient {
-
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected final HttpClient client;
 
@@ -121,16 +114,8 @@ public abstract class AbstractRestClient {
         } else if (this.interceptor != null) {
             this.interceptor.intercept(request);
         }
-        System.setProperty("http.proxyHost", "127.0.0.1");
-        System.setProperty("https.proxyHost", "127.0.0.1");
-        System.setProperty("http.proxyPort", "8888");
-        System.setProperty("https.proxyPort", "8888");
-        System.setProperty("javax.net.ssl.trustStore", "C:\\Program Files\\Java\\jdk1.8.0_73\\jre\\lib\\security\\FiddlerKeystore");
-        System.setProperty("javax.net.ssl.trustStorePassword", "testme");
-        HttpHost proxy = new HttpHost("localhost", 8888);
-        CloseableHttpClient wf_client = HttpClients.custom().setProxy(proxy).build();
-        return wf_client.execute(request);       
-//        return client.execute(request);
+        HttpResponse resp=client.execute(request);
+        return resp;
     }
 
     protected HttpResponse execute(RequestInterceptor interceptor, HttpRequestBase request, int expectedStatus)
@@ -138,7 +123,6 @@ public abstract class AbstractRestClient {
 
         String method = request.getMethod();
         String path = request.getURI().toString();
-        logger.info("Send -> " + method + " " + path);
         HttpResponse response = null;
         try {
             response = execute(interceptor, request);
@@ -147,9 +131,9 @@ public abstract class AbstractRestClient {
         }
         int status = response.getStatusLine().getStatusCode();
         if (status >= 200 && status < 400) {
-            logger.info("[" + status + "] Successfully sent " + method + " " + path);
+//            logger.info("[" + status + "] Successfully sent " + method + " " + path);
         } else {
-            logger.error("[" + status + "] Failed to send " + method + " " + path);
+//            logger.error("[" + status + "] Failed to send " + method + " " + path);
         }
         if (expectedStatus != status) {
             String content = "";

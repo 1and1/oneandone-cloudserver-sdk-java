@@ -15,16 +15,17 @@
  */
 package com.oneandone.rest.test;
 
-import com.oneandone.rest.client.RestClientException;
 import com.oneandone.rest.POJO.Requests.CreateServerIPRequest;
 import com.oneandone.rest.POJO.Response.ServerIPs;
 import com.oneandone.rest.POJO.Response.ServerResponse;
 import com.oneandone.rest.POJO.Response.Types;
-import com.oneandone.rest.POJO.Response.Types.ServerState;
+import com.oneandone.rest.client.RestClientException;
+import static com.oneandone.rest.test.TestHelper.CreateTestServer;
 import com.oneandone.sdk.OneAndOneApi;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
@@ -44,57 +45,38 @@ public class ServerIPTest {
     static ServerResponse server;
 
     @BeforeClass
-    public static void getServerIPS() throws RestClientException, IOException {
-        oneandoneApi.setToken("apiToken");
-        servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "java", null);
-        for (ServerResponse serverItem : servers) {
-            if (serverItem.getIps() != null && !serverItem.getIps().isEmpty()) {
-                serverId = serverItem.getId();
-                break;
-            }
-        }
+    public static void getServerIPS() throws RestClientException, IOException, InterruptedException {
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+        serverId = CreateTestServer("java server ip test1", true).getId();
+        server = oneandoneApi.getServerApi().getServer(serverId);
+        ipId = server.getIps().get(0).getId();
+    }
 
-        List<ServerIPs> result = oneandoneApi.getServerIpsApi().getServerIps(serverId);
-        ipId = result.get(0).getId();
-        assertNotNull(result);
+    @AfterClass
+    public static void deleteServer() throws RestClientException, IOException, InterruptedException {
+        deleteServerIP();
+        if (serverId != null) {
+            Thread.sleep(150000);
+            TestHelper.waitServerReady(serverId);
+            oneandoneApi.getServerApi().deleteServer(serverId, false);
+        }
     }
 
     @Test
     public void getServerIP() throws RestClientException, IOException, InterruptedException {
-        ServerResponse currentServer = null;
-        servers = oneandoneApi.getServerApi().getAllServers(0, 0, null, "java", null);
-        for (ServerResponse serverItem : servers) {
-            if (serverItem.getIps() != null && !serverItem.getIps().isEmpty()) {
-                serverId = serverItem.getId();
-                currentServer = serverItem;
-                break;
-            }
-        }
-        ServerIPs result = oneandoneApi.getServerIpsApi().getServerIp(serverId, currentServer.getIps().get(0).getId());
+        ServerIPs result = oneandoneApi.getServerIpsApi().getServerIp(serverId, ipId);
         assertNotNull(result);
     }
 
     @Test
     public void createServerIP() throws RestClientException, IOException, InterruptedException {
-        int previousIpCount = 0;
-        for (ServerResponse item : servers) {
-            if (item.getIps() == null || item.getIps().isEmpty()) {
-                continue;
-            }
-            if (item.getStatus().getState() == ServerState.DEPLOYING || item.getStatus().getState() == ServerState.REMOVING || (item.getIps() != null && item.getIps().size() >= 5)) {
-                return;
-            } else {
-                server = item;
-                previousIpCount = item.getIps().size();
-                break;
-            }
-        }
-
+        int previousIpCount = 1;
         CreateServerIPRequest request = new CreateServerIPRequest();
         request.setType(Types.IPType.IPV4);
         ServerResponse result = oneandoneApi.getServerIpsApi().createServerIP(serverId, request);
         assertNotNull(result);
         assertNotNull(result.getId());
+        TestHelper.waitServerReady(serverId);
         //give the server time to update
         ServerResponse resultServer = oneandoneApi.getServerApi().getServer(serverId);
         while (resultServer.getIps().size() == previousIpCount) {
@@ -105,27 +87,16 @@ public class ServerIPTest {
         Assert.assertTrue(resultServer.getIps().size() > previousIpCount);
     }
 
-    @Test
-    public void deleteServerIP() throws RestClientException, IOException, InterruptedException {
-        int previousIpCount = 0;
-        for (ServerResponse item : servers) {
-            if (item.getIps() != null && item.getIps().size() > 0) {
-                server = item;
-                previousIpCount = item.getIps().size();
-                break;
-            }
-        }
-        if (server.getIps() == null) {
-            return;
-        }
-
-        if (server.getStatus().getState() == ServerState.DEPLOYING || server.getStatus().getState() == ServerState.REMOVING || server.getIps().size() == 1) {
-            return;
-        }
-        ServerResponse result = oneandoneApi.getServerIpsApi().deleteServerIp(server.getId(), server.getIps().get(rand.nextInt(server.getIps().size() - 1)).getId(), true);
+    public static void deleteServerIP() throws RestClientException, IOException, InterruptedException {
+        int previousIpCount = 2;
+        TestHelper.waitServerReady(serverId);
+        String ipId=oneandoneApi.getServerApi().getServer(serverId).getIps().get(1).getId();
+        Thread.sleep(300000);
+        ServerResponse result = oneandoneApi.getServerIpsApi().deleteServerIp(server.getId(), ipId, true);
         assertNotNull(result);
         assertNotNull(result.getId());
         //give the server time to update
+        TestHelper.waitServerReady(serverId);
         ServerResponse resultServer = oneandoneApi.getServerApi().getServer(result.getId());
         while (resultServer.getIps().size() == previousIpCount) {
             Thread.sleep(2000);

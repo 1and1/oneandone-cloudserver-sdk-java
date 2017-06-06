@@ -29,10 +29,12 @@
  */
 package com.oneandone.rest.client;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.oneandone.rest.POJO.Requests.BaseRequest;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.io.Charsets;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -42,10 +44,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.oneandone.rest.POJO.Requests.BaseRequest;
-import java.lang.reflect.InvocationTargetException;
 
 public class RestClient extends AbstractRestClient {
 

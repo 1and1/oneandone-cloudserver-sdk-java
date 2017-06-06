@@ -1,4 +1,4 @@
-/*
+    /*
  * Copyright 2016 aliba.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,6 +49,8 @@ public class LoadBalancerResponse {
     private List<ServerIPs> serverips;
     @JsonProperty("cloudpanel_id")
     private String cloudpanelId;
+    @JsonProperty("datacenter_id")
+    private String datacenterId;
 
     /**
      * @return the id
@@ -272,5 +274,19 @@ public class LoadBalancerResponse {
      */
     public void setCloudpanelId(String cloudpanel_id) {
         this.cloudpanelId = cloudpanel_id;
+    }
+    
+    /**
+     * Id of the data center
+     */
+    public String getDataCenter() {
+        return datacenterId;
+    }
+
+    /**
+     * @param datacenterId the data center to set
+     */
+    public void setDataCenter(String datacenterId) {
+        this.datacenterId = datacenterId;
     }
 }

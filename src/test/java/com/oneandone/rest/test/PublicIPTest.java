@@ -41,7 +41,8 @@ public class PublicIPTest {
 
     @BeforeClass
     public static void getAllPublicIPs() throws RestClientException, IOException {
-        oneandoneApi.setToken("apiToken");
+        oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
+        createPublicIP();
         List<PublicIPResponse> result = oneandoneApi.getPublicIPApi().getPublicIps(0, 0, null, null, null);
         publicIPs = result;
         assertNotNull(result);
@@ -56,8 +57,7 @@ public class PublicIPTest {
 
     }
 
-    @Test
-    public void createPublicIP() throws RestClientException, IOException {
+    public static void createPublicIP() throws RestClientException, IOException {
         String randomValue = rand.nextInt(99) + "test.java";
 
         CreatePublicIPRequest request = new CreatePublicIPRequest();
@@ -75,7 +75,7 @@ public class PublicIPTest {
     @Test
     public void updatePublicIP() throws RestClientException, IOException, InterruptedException {
         String randomValue = rand.nextInt(99) + "update.java";
-        PublicIPResponse publicIp = publicIPs.get(publicIPs.size()-1);
+        PublicIPResponse publicIp = publicIPs.get(publicIPs.size() - 1);
         UpdatePublicIP request = new UpdatePublicIP();
         request.setReverseDns(randomValue);
         PublicIPResponse result = oneandoneApi.getPublicIPApi().updatePublicIp(publicIp.getId(), request);
@@ -89,7 +89,7 @@ public class PublicIPTest {
 
     @AfterClass
     public static void deletePublicIP() throws RestClientException, IOException, InterruptedException {
-        PublicIPResponse publicIp = publicIPs.get(publicIPs.size()-1);
+        PublicIPResponse publicIp = publicIPs.get(publicIPs.size() - 1);
         PublicIPResponse result = oneandoneApi.getPublicIPApi().deletePublicIp(publicIp.getId());
 
         assertNotNull(result);
