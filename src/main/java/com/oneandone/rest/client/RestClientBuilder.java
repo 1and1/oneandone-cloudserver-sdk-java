@@ -30,17 +30,15 @@
 package com.oneandone.rest.client;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import java.lang.reflect.Constructor;
-
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
+import java.lang.reflect.Constructor;
+import java.util.concurrent.TimeUnit;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 public class RestClientBuilder {
 
@@ -90,7 +88,13 @@ public class RestClientBuilder {
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         }
         if (client == null) {
-            client = HttpClientBuilder.create().useSystemProperties().build();
+            client = HttpClientBuilder.create()
+                    .disableCookieManagement()
+                    .evictExpiredConnections()
+                    .setMaxConnPerRoute(25000000)
+                    .setMaxConnTotal(25000000)
+                    .evictIdleConnections(120, TimeUnit.SECONDS)
+                    .build();
         }
         return createRestClient(this, clazz);
     }

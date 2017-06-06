@@ -55,6 +55,7 @@ public class ImagesTest {
         request.setNumImages(2);
         request.setFrequency(Types.ImageFrequency.DAILY);
         request.setServerId(serverId);
+        request.setSource(Types.ImageSource.SERVER);
         Image image = oneandoneApi.getImageApi().createImage(request);
         imageId = image.getId();
         assertNotNull(image);
@@ -64,6 +65,9 @@ public class ImagesTest {
     public static void cleanupTest() throws RestClientException, IOException, InterruptedException {
         TestHelper.waitServerReady(serverId);
         oneandoneApi.getServerApi().deleteServer(serverId, false);
+        TestHelper.waitImageReady(imageId);
+        Image result = oneandoneApi.getImageApi().deleteImage(imageId);
+        assertNotNull(result);
     }
 
     @Test
@@ -81,18 +85,12 @@ public class ImagesTest {
     @Test
     public void updateImage() throws RestClientException, IOException, InterruptedException {
         TestHelper.waitImageReady(imageId);
+        TestHelper.waitServerReady(serverId);
         UpdateImageRequest request = new UpdateImageRequest();
         request.setDescription("updated describe image");
         request.setName("Updated java sdk Image");
         request.setFrequency(Types.ImageFrequency.ONCE);
         Image image = oneandoneApi.getImageApi().updateImage(imageId, request);
         assertNotNull(image);
-    }
-
-    @AfterClass
-    public static void deleteImage() throws RestClientException, IOException, InterruptedException {
-        TestHelper.waitImageReady(imageId);
-        Image result = oneandoneApi.getImageApi().deleteImage(imageId);
-        assertNotNull(result);
     }
 }

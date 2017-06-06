@@ -50,12 +50,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractRestClient {
-
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected final HttpClient client;
 
@@ -118,7 +114,8 @@ public abstract class AbstractRestClient {
         } else if (this.interceptor != null) {
             this.interceptor.intercept(request);
         }
-        return client.execute(request);
+        HttpResponse resp=client.execute(request);
+        return resp;
     }
 
     protected HttpResponse execute(RequestInterceptor interceptor, HttpRequestBase request, int expectedStatus)
@@ -126,7 +123,6 @@ public abstract class AbstractRestClient {
 
         String method = request.getMethod();
         String path = request.getURI().toString();
-        logger.info("Send -> " + method + " " + path);
         HttpResponse response = null;
         try {
             response = execute(interceptor, request);
@@ -135,9 +131,9 @@ public abstract class AbstractRestClient {
         }
         int status = response.getStatusLine().getStatusCode();
         if (status >= 200 && status < 400) {
-            logger.info("[" + status + "] Successfully sent " + method + " " + path);
+//            logger.info("[" + status + "] Successfully sent " + method + " " + path);
         } else {
-            logger.error("[" + status + "] Failed to send " + method + " " + path);
+//            logger.error("[" + status + "] Failed to send " + method + " " + path);
         }
         if (expectedStatus != status) {
             String content = "";

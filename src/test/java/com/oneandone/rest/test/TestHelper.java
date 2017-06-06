@@ -32,6 +32,7 @@ import com.oneandone.sdk.OneAndOneApi;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -46,67 +47,67 @@ public class TestHelper {
     }
 
     public static void waitServerReady(String serverId) throws InterruptedException, RestClientException, IOException {
-        Thread.sleep(5000);
+        TimeUnit.SECONDS.sleep(4);
         ServerResponse server = oneandoneApi.getServerApi().getServer(serverId);
         while (server != null
                 && ((server.getStatus().getState() != Types.ServerState.POWERED_ON
                 && server.getStatus().getState() != Types.ServerState.POWERED_OFF)
                 || (server.getStatus().getPercent() != 0 && server.getStatus().getPercent() != 99))) {
-            Thread.sleep(10000);
+            TimeUnit.SECONDS.sleep(6);
             server = oneandoneApi.getServerApi().getServer(serverId);
         }
     }
 
     public static void waitImageReady(String imageId) throws InterruptedException, RestClientException, IOException {
-        Thread.sleep(5000);
+        TimeUnit.SECONDS.sleep(4);
         Image image = oneandoneApi.getImageApi().getImage(imageId);
-        while (!"ACTIVE".equals(image.getState()) || !"ENABLED".equals(image.getState())) {
-            Thread.sleep(10000);
+        while (!"ACTIVE".equals(image.getState()) && !"ENABLED".equals(image.getState())) {
+            TimeUnit.SECONDS.sleep(6);
             image = oneandoneApi.getImageApi().getImage(imageId);
         }
     }
 
     public static void waitSharedStorageReady(String storageId) throws InterruptedException, RestClientException, IOException {
-        Thread.sleep(5000);
+        TimeUnit.SECONDS.sleep(4);
         SharedStorageResponse storage = oneandoneApi.getSharedStoragesApi().getShareStorage(storageId);
         while (!"ACTIVE".equals(storage.getState())) {
-            Thread.sleep(10000);
+            TimeUnit.SECONDS.sleep(6);
             storage = oneandoneApi.getSharedStoragesApi().getShareStorage(storageId);
         }
     }
 
     public static void waitFirewallPolicyReady(String fwId) throws InterruptedException, RestClientException, IOException {
-        Thread.sleep(5000);
+        TimeUnit.SECONDS.sleep(4);
         FirewallPolicyResponse fw = oneandoneApi.getFirewallPoliciesApi().getFirewallPolicy(fwId);
         while ("CONFIGURING".equals(fw.getState())) {
-            Thread.sleep(10000);
+            TimeUnit.SECONDS.sleep(6);
             fw = oneandoneApi.getFirewallPoliciesApi().getFirewallPolicy(fwId);
         }
     }
 
     public static void waitLoadBalancerReady(String lbId) throws InterruptedException, RestClientException, IOException {
-        Thread.sleep(5000);
+        TimeUnit.SECONDS.sleep(4);
         LoadBalancerResponse lb = oneandoneApi.getLoadBalancerApi().getLoadBalancer(lbId);
         while ("CONFIGURING".equals(lb.getState())) {
-            Thread.sleep(10000);
+            TimeUnit.SECONDS.sleep(6);
             lb = oneandoneApi.getLoadBalancerApi().getLoadBalancer(lbId);
         }
     }
 
     public static void waitMonitoringPolicyReady(String policyId) throws InterruptedException, RestClientException, IOException {
-        Thread.sleep(5000);
+        TimeUnit.SECONDS.sleep(4);
         MonitoringPoliciesResponse policy = oneandoneApi.getMonitoringPoliciesApi().getMonitoringPolicy(policyId);
         while ("CONFIGURING".equals(policy.getState())) {
-            Thread.sleep(10000);
+            TimeUnit.SECONDS.sleep(6);
             policy = oneandoneApi.getMonitoringPoliciesApi().getMonitoringPolicy(policyId);
         }
     }
 
     public static void waitPNReady(String pnId) throws InterruptedException, RestClientException, IOException {
-        Thread.sleep(5000);
+        TimeUnit.SECONDS.sleep(4);
         PrivateNetworksResponse lb = oneandoneApi.getPrivateNetworkApi().getPrivateNetwork(pnId);
         while ("CONFIGURING".equals(lb.getState())) {
-            Thread.sleep(10000);
+            TimeUnit.SECONDS.sleep(6);
             lb = oneandoneApi.getPrivateNetworkApi().getPrivateNetwork(pnId);
         }
     }

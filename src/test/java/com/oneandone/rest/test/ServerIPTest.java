@@ -47,7 +47,7 @@ public class ServerIPTest {
     @BeforeClass
     public static void getServerIPS() throws RestClientException, IOException, InterruptedException {
         oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
-        serverId = CreateTestServer("java server ip test", true).getId();
+        serverId = CreateTestServer("java server ip test1", true).getId();
         server = oneandoneApi.getServerApi().getServer(serverId);
         ipId = server.getIps().get(0).getId();
     }
@@ -56,6 +56,7 @@ public class ServerIPTest {
     public static void deleteServer() throws RestClientException, IOException, InterruptedException {
         deleteServerIP();
         if (serverId != null) {
+            Thread.sleep(150000);
             TestHelper.waitServerReady(serverId);
             oneandoneApi.getServerApi().deleteServer(serverId, false);
         }
@@ -87,7 +88,7 @@ public class ServerIPTest {
     }
 
     public static void deleteServerIP() throws RestClientException, IOException, InterruptedException {
-        int previousIpCount = 1;
+        int previousIpCount = 2;
         TestHelper.waitServerReady(serverId);
         String ipId=oneandoneApi.getServerApi().getServer(serverId).getIps().get(1).getId();
         Thread.sleep(300000);

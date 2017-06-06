@@ -45,7 +45,7 @@ public class ServerImageTest {
     @BeforeClass
     public static void getServerImage() throws RestClientException, IOException, InterruptedException {
         oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
-        serverId = CreateTestServer("servers hardware test", true).getId();
+        serverId = CreateTestServer("servers image test", true).getId();
         ServerImage image = oneandoneApi.getServerImageApi().getImage(serverId);
         assertNotNull(image);
         TestHelper.waitServerReady(serverId);

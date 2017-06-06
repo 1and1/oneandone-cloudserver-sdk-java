@@ -86,7 +86,7 @@ public class ServerHardwareTest {
         TestHelper.waitServerReady(serverId);
         resultserver = oneandoneApi.getServerApi().getServer(result.getId());
         //check if the values are updated as expected
-        Assert.assertEquals((int)resultserver.getHardware().getRam(), (int)Ram);
+        Assert.assertEquals((int) resultserver.getHardware().getRam(), (int) Ram);
 
     }
 
@@ -149,6 +149,7 @@ public class ServerHardwareTest {
     }
 
     public static void deleteHdd() throws RestClientException, IOException, InterruptedException {
+        TestHelper.waitServerReady(serverId);
         ServerResponse server = oneandoneApi.getServerApi().getServer(serverId);
         Hdd randomHdd = null;
         int previousCount = 0;
@@ -176,8 +177,8 @@ public class ServerHardwareTest {
         assertTrue(previousCount > resultserver.getHardware().getHdds().size());
     }
 
-    @Test
     public void getDVD() throws RestClientException, IOException, InterruptedException {
+        TestHelper.waitServerReady(serverId);
         ServerResponse server = oneandoneApi.getServerApi().getServer(serverId);
         Dvd result = oneandoneApi.getServerHardwareApi().getDVD(serverId);
         assertNotNull(result);
@@ -193,6 +194,7 @@ public class ServerHardwareTest {
         request.setId(dvds.get(0).getId());
         ServerResponse result = oneandoneApi.getServerHardwareApi().updateDVD(server.getId(), request);
         assertNotNull(result);
+        getDVD();
     }
 
     @Test

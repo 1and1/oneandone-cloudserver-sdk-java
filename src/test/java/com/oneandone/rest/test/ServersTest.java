@@ -136,6 +136,7 @@ public class ServersTest {
 
     @Test
     public void updateServer() throws RestClientException, IOException, InterruptedException {
+        TestHelper.waitServerReady(serverId);
         int ranValue = rand.nextInt(200);
         String udpatedName = "Updatedjava" + ranValue;
         String updatedDesc = "Updated desc" + ranValue;
@@ -144,7 +145,6 @@ public class ServersTest {
         object.setDescription(updatedDesc);
         ServerResponse result = oneandoneApi.getServerApi().updateServer(serverId, object);
         assertNotNull(result);
-
     }
 
 }

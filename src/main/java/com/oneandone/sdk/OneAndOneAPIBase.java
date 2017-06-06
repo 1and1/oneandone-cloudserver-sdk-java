@@ -47,7 +47,7 @@ public abstract class OneAndOneAPIBase {
             }
         };
         Properties props = ConfigReader.getProperties();
-        if (System.getenv("PROFITBRICKS_USERNAME") != null) {
+        if (props.getProperty("apiurl") != null) {
             urlBase = props.getProperty("apiurl");
         }
 
@@ -66,7 +66,9 @@ public abstract class OneAndOneAPIBase {
             }
         };
         Properties props = ConfigReader.getProperties();
-        urlBase = props.getProperty("apiurl");
+        if (props.getProperty("apiurl") != null) {
+            urlBase = props.getProperty("apiurl");
+        }
         client = RestClient.builder().requestInterceptor(authorize).build();
     }
 

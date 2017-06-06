@@ -7,9 +7,8 @@ package com.oneandone.rest.POJO.Response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oneandone.rest.POJO.Response.Types.ImageFrequency;
-import com.oneandone.rest.POJO.Response.Types.ImageType;
+import com.oneandone.rest.POJO.Response.Types.ImageSource;
 import com.oneandone.rest.POJO.Response.Types.OSFamliyType;
-import com.oneandone.rest.POJO.Response.Types.OSType;
 import java.util.List;
 
 /**
@@ -22,7 +21,7 @@ public class Image {
     private String name;
     @JsonProperty("os_family")
     private OSFamliyType osFamily;
-    private OSType os;
+    private String os;
     @JsonProperty("os_version")
     private String osVersion;
     @JsonProperty("available_sites")
@@ -30,7 +29,7 @@ public class Image {
     private int architecture;
     @JsonProperty("os_image_type")
     private String osImageType;
-    private ImageType type;
+    private String type;
     @JsonProperty("min_hdd_size")
     private int minHddSize;
     private Licenses[] licenses;
@@ -46,6 +45,12 @@ public class Image {
     private int numImages;
     @JsonProperty("creation_date")
     private String creationDate;
+    @JsonProperty("datacenter_id")
+    private String datacenterId;
+    private ImageSource source;
+    private String url;
+    @JsonProperty("os_id")
+    private String osId;
 
     /**
      * @return the id
@@ -92,15 +97,47 @@ public class Image {
     /**
      * @return the os
      */
-    public OSType getOs() {
+    public String getOs() {
         return os;
     }
 
     /**
      * @param os the os to set
      */
-    public void setOs(OSType os) {
+    public void setOs(String os) {
         this.os = os;
+    }
+
+    /**
+     * @return the URL where the image can be downloaded. It is required when
+     * the source is image or iso.
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * @param url URL where the image can be downloaded. It is required when the
+     * source is image or iso.
+     */
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    /**
+     * @return ID of the Operative System you want to import. You can get a list
+     * of the available ones with the method /iamges/os.
+     */
+    public String getOsId() {
+        return osId;
+    }
+
+    /**
+     * @param osId ID of the Operative System you want to import. You can get a
+     * list of the available ones with the method /iamges/os.
+     */
+    public void setOsId(String osId) {
+        this.osId = osId;
     }
 
     /**
@@ -148,14 +185,14 @@ public class Image {
     /**
      * @return the type
      */
-    public ImageType getType() {
+    public String getType() {
         return type;
     }
 
     /**
      * @param type the type to set
      */
-    public void setType(ImageType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -311,5 +348,35 @@ public class Image {
      */
     public void setAvailableSites(String[] availableSites) {
         this.availableSites = availableSites;
+    }
+
+    /**
+     * Id of the data center
+     */
+    public String getDataCenter() {
+        return datacenterId;
+    }
+
+    /**
+     * @param datacenterId the data center to set
+     */
+    public void setDataCenter(String datacenterId) {
+        this.datacenterId = datacenterId;
+    }
+
+    /**
+     * Source of the new image: server (from an existing server), image (from an
+     * imported image) or iso (from an imported iso)
+     */
+    public ImageSource getSource() {
+        return source;
+    }
+
+    /**
+     * @param source Source of the new image: server (from an existing server),
+     * image (from an imported image) or iso (from an imported iso)
+     */
+    public void setSource(ImageSource source) {
+        this.source = source;
     }
 }
