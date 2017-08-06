@@ -29,9 +29,11 @@ public class CreateServerRequest extends BaseRequest{
         private HardwareRequest hardware;
         @JsonProperty("appliance_id")
         private String applianceId;
+        @JsonProperty("datacenter_id")
+        private String datacenterId;
         private String password;
-        @JsonProperty("region_id")
-        private String regionId;
+        @JsonProperty("rsa_key")
+        private String rsaKey;
         @JsonProperty("power_on")
         private Boolean powerOn;
         @JsonProperty("firewall_policy_id")
@@ -98,6 +100,20 @@ public class CreateServerRequest extends BaseRequest{
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
     }
+    
+    /**
+     * @return the datacenterId
+     */
+    public String getdatacenterId() {
+        return datacenterId;
+    }
+
+    /**
+     * @param datacenterId NOT Required: ID of the datacenter where the server will be created
+     */
+    public void setdatacenterId(String datacenterId) {
+        this.datacenterId = datacenterId;
+    }
 
     /**
      * @return the password
@@ -114,17 +130,17 @@ public class CreateServerRequest extends BaseRequest{
     }
 
     /**
-     * @return the region_id
+     * @return the rsaKey
      */
-    public String getRegionId() {
-        return regionId;
+    public String getRsaKey() {
+        return rsaKey;
     }
 
     /**
-     * @param regionId NOT REQUIRED: ID of the region where the server will be created 
+     * @param rsaKey NOT REQUIRED: Put a valid public SSH Key to be copied into the server during creation. Then you will be able to access to the server using your SSH keys
      */
-    public void setRegionId(String regionId) {
-        this.regionId = regionId;
+    public void setRsaKey(String rsaKey) {
+        this.rsaKey = rsaKey;
     }
 
     /**
