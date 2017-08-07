@@ -35,7 +35,7 @@ public abstract class OneAndOneAPIBase {
     public RestClient client;
 
     private String token;
-    private String urlBase = "https://cloudpanel-api.1and1.com/v1";
+    private String urlBase = "https://cloudpanel-api.1and1.com/v1/";
 
     public OneAndOneAPIBase(String resource, String parentResource) {
         this.resource = resource;
