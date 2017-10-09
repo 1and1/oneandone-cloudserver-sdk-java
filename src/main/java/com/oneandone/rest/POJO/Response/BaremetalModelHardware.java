@@ -21,20 +21,20 @@ package com.oneandone.rest.POJO.Response;
  */
 public class BaremetalModelHardware extends HardwareBase {
 
-    private int cores;
+    private int core;
 
     /**
-     * @return the cores
+     * @return the core
      */
-    public int getCores() {
-        return cores;
+    public int getCore() {
+        return core;
     }
 
     /**
-     * @param cores the cores to set
+     * @param core the core to set
      */
-    public void setCores(int cores) {
-        this.cores = cores;
+    public void setCore(int core) {
+        this.core = core;
     }
 
 }
