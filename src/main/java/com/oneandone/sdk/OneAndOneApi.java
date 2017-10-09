@@ -661,7 +661,10 @@ public class OneAndOneApi {
     /**
      * @return the baremetalModelApi
      */
-    public BaremetalModelApi getBaremetalModelApi() { return baremetalModelApi; }
+    public BaremetalModelApi getBaremetalModelApi() {
+        this.baremetalModelApi.setToken(token);
+        return baremetalModelApi;
+    }
 
     /**
      * @param baremetalModelApi the baremetalModelApi to set
@@ -671,7 +674,10 @@ public class OneAndOneApi {
     /**
      * @return the recoveryAppliancesApi
      */
-    public RecoveryAppliancesApi getRecoveryAppliancesApi() { return recoveryAppliancesApi; }
+    public RecoveryAppliancesApi getRecoveryAppliancesApi() {
+        this.recoveryAppliancesApi.setToken(token);
+        return recoveryAppliancesApi;
+    }
 
     /**
      * @param recoveryAppliancesApi the recoveryAppliancesApi to set
