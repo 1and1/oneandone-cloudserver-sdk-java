@@ -153,7 +153,8 @@ public class Types {
       DEPLOYING("DEPLOYING"),
       REBOOTING("REBOOTING"),
       REMOVING("REMOVING"),
-      CONFIGURING("CONFIGURING");
+      CONFIGURING("CONFIGURING"),
+      ON_RECOVERY("ON_RECOVERY");
 
       // the value which is used for matching
       // the json node value with this enum
@@ -167,6 +168,19 @@ public class Types {
       public String toString() {
          return value;
       }
+   }
+
+   public enum ServerType {
+      CLOUD("cloud"),
+      BAREMETAL("baremetal"),
+      DEDICATED("dedicated");
+
+      private final String value;
+
+      ServerType(final String type) { value = type; }
+
+      @Override
+      public String toString() { return value; }
    }
 
    public enum ServerAction {
@@ -455,6 +469,42 @@ public class Types {
       private final String value;
 
       ImageSource(final String type) {
+         value = type;
+      }
+
+      @Override
+      public String toString() {
+         return value;
+      }
+   }
+
+   public enum ErrorMessages {
+      BAREMETAL_MISSING_MODEL_ID("When creating baremetal server, baremetal model id must be provided.");
+
+      // the value which is used for matching
+      // the json node value with this enum
+      private final String value;
+
+      ErrorMessages(final String type) {
+         value = type;
+      }
+
+      @Override
+      public String toString() {
+         return value;
+      }
+   }
+
+   public enum ServerTypeCompatibility {
+      VPS("vps"),
+      CLOUD("cloud"),
+      BAREMETAL("baremetal");
+
+      // the value which is used for matching
+      // the json node value with this enum
+      private final String value;
+
+      ServerTypeCompatibility(final String type) {
          value = type;
       }
 
