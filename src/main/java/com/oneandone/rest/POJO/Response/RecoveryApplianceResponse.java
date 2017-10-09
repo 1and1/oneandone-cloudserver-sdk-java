@@ -16,16 +16,14 @@
 package com.oneandone.rest.POJO.Response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.oneandone.rest.POJO.Response.Types.ServerTypeCompatibility;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
  * @author aajdinov
  */
-public class RecoveryAppliancesResponse {
+public class RecoveryApplianceResponse {
 
     @JsonProperty("id")
     private String id;
@@ -33,8 +31,14 @@ public class RecoveryAppliancesResponse {
     private String name;
     @JsonProperty("available_datacenters")
     private List<String> availableDatacenters;
+    @JsonProperty("os_family")
+    private String osFamily;
     @JsonProperty("os")
-    private Os os;
+    private String os;
+    @JsonProperty("os_version")
+    private String osVersion;
+    @JsonProperty("architecture")
+    private Integer architecture;
 
     /**
      *
@@ -74,6 +78,78 @@ public class RecoveryAppliancesResponse {
 
     /**
      *
+     * @return The osFamily
+     */
+    @JsonProperty("os_family")
+    public String getOsFamily() {
+        return osFamily;
+    }
+
+    /**
+     *
+     * @param osFamily The os_family
+     */
+    @JsonProperty("os_family")
+    public void setOsFamily(String osFamily) {
+        this.osFamily = osFamily;
+    }
+
+    /**
+     *
+     * @return The os
+     */
+    @JsonProperty("os")
+    public String getOs() {
+        return os;
+    }
+
+    /**
+     *
+     * @param os The os
+     */
+    @JsonProperty("os")
+    public void setOs(String os) {
+        this.os = os;
+    }
+
+    /**
+     *
+     * @return The osVersion
+     */
+    @JsonProperty("os_version")
+    public String getOsVersion() {
+        return osVersion;
+    }
+
+    /**
+     *
+     * @param osVersion The os_version
+     */
+    @JsonProperty("os_version")
+    public void setOsVersion(String osVersion) {
+        this.osVersion = osVersion;
+    }
+
+    /**
+     *
+     * @return The architecture
+     */
+    @JsonProperty("architecture")
+    public Integer getArchitecture() {
+        return architecture;
+    }
+
+    /**
+     *
+     * @param architecture The os_architecture
+     */
+    @JsonProperty("architecture")
+    public void setArchitecture(Integer architecture) {
+        this.architecture = architecture;
+    }
+
+    /**
+     *
      * @return the available_datacenters
      */
     public List<String> getAvailableDatacenters() {
@@ -86,24 +162,6 @@ public class RecoveryAppliancesResponse {
      */
     public void setAvailableDatacenters(List<String> availableDatacenters) {
         this.availableDatacenters = availableDatacenters;
-    }
-
-    /**
-     *
-     * @return The os
-     */
-    @JsonProperty("os")
-    public Os getOs() {
-        return os;
-    }
-
-    /**
-     *
-     * @param os The os
-     */
-    @JsonProperty("os")
-    public void setOs(Os os) {
-        this.os = os;
     }
 
 }

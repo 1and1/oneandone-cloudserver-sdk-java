@@ -16,6 +16,7 @@
 package com.oneandone.sdk;
 
 import com.oneandone.rest.POJO.Response.RecoveryAppliancesResponse;
+import com.oneandone.rest.POJO.Response.RecoveryApplianceResponse;
 import com.oneandone.rest.client.RestClientException;
 
 import java.io.IOException;
@@ -92,8 +93,8 @@ public class RecoveryAppliancesApi extends OneAndOneAPIBase {
      * @throws RestClientException
      * @throws IOException
      */
-    public RecoveryAppliancesResponse getRecoveryAppliance(String applianceId) throws RestClientException, IOException {
-        return client.get(getUrlBase().concat(resource).concat("/").concat(applianceId), null, RecoveryAppliancesResponse.class);
+    public RecoveryApplianceResponse getRecoveryAppliance(String applianceId) throws RestClientException, IOException {
+        return client.get(getUrlBase().concat(resource).concat("/").concat(applianceId), null, RecoveryApplianceResponse.class);
     }
 
 }

@@ -16,8 +16,7 @@
 package com.oneandone.rest.test;
 
 import com.oneandone.rest.POJO.Response.RecoveryAppliancesResponse;
-import com.oneandone.rest.POJO.Response.ServerAppliancesExtendedResponse;
-import com.oneandone.rest.POJO.Response.ServerAppliancesResponse;
+import com.oneandone.rest.POJO.Response.RecoveryApplianceResponse;
 import com.oneandone.rest.client.RestClientException;
 import com.oneandone.sdk.OneAndOneApi;
 import org.junit.BeforeClass;
@@ -47,7 +46,7 @@ public class RecoveryAppliancesTest {
 
     @Test
     public void getRecoveryAppliance() throws RestClientException, IOException {
-        RecoveryAppliancesResponse result = oneandoneApi.getRecoveryAppliancesApi().getRecoveryAppliance(appliances.get(0).getId());
+        RecoveryApplianceResponse result = oneandoneApi.getRecoveryAppliancesApi().getRecoveryAppliance(appliances.get(0).getId());
 
         assertNotNull(result);
         assertNotNull(result.getId());
