@@ -17,8 +17,9 @@ package com.oneandone.rest.test;
 
 import com.oneandone.rest.POJO.Requests.CreateBlockStorageRequest;
 import com.oneandone.rest.POJO.Requests.BlockStorageServerRequest;
+import com.oneandone.rest.POJO.Requests.UpdateBlockStorageRequest;
 import com.oneandone.rest.POJO.Response.BlockStorageResponse;
-import com.oneandone.rest.POJO.Response.DataCenter;
+import com.oneandone.rest.POJO.Response.ServerResponse;
 
 import com.oneandone.rest.client.RestClientException;
 import com.oneandone.sdk.OneAndOneApi;
@@ -42,24 +43,23 @@ public class BlockStoragesTest {
     static OneAndOneApi oneandoneApi = new OneAndOneApi();
     static Random rand = new Random();
     static BlockStorageResponse blockStorageResponse;
-    static String serverId;
+    static ServerResponse server;
 
     @BeforeClass
     public static void testInit() throws RestClientException, IOException, InterruptedException {
         oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
-        List<DataCenter> dcs = oneandoneApi.getDataCenterApi().getDataCenters(0, 0, null, null, null);
+
+        server = CreateTestServer("javaBlockStorageServer" + rand.nextInt(200), true);
 
         CreateBlockStorageRequest request = new CreateBlockStorageRequest();
         request.setName("javaBlockStorage" + rand.nextInt(200));
         request.setDescription("desc");
         request.setSize(60);
-        request.setDataCenterId(dcs.get(0).getId());
+        request.setDataCenterId(server.getDataCenter().getId());
 
         BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().createBlockStorage(request);
         blockStorageResponse = result;
         assertNotNull(result);
-
-        serverId = CreateTestServer("javaBlockStorageServer" + rand.nextInt(200), true).getId();
     }
 
     @Test
@@ -78,31 +78,31 @@ public class BlockStoragesTest {
 
     }
 
-//    @Test
-//    public void updateBlockStorage() throws RestClientException, IOException, InterruptedException {
-//        TestHelper.waitBlockStorageReady(blockStorageResponse.getId());
-//        UpdateBlockStorageRequest request = new UpdateBlockStorageRequest();
-//        request.setName(blockStorageResponse.getName() + " - Updated" + rand.nextInt(900));
-//        request.setDescription(blockStorageResponse.getDescription() + "Updated");
-//
-//        BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().updateBlockStorage(blockStorageResponse.getId(), request);
-//        assertNotNull(result);
-//        assertNotNull(result.getId());
-//
-//        TestHelper.waitBlockStorageReady(blockStorageResponse.getId());
-//        BlockStorageResponse storageResult = oneandoneApi.getBlockStoragesApi().getBlockStorage(blockStorageResponse.getId());
-//
-//        //check the storage is updated with new values
-//        assertNotNull(result.getId());
-//        assertEquals(result.getDescription(), storageResult.getDescription());
-//        assertEquals(result.getSize(), storageResult.getSize());
-//        assertEquals(result.getName(), storageResult.getName());
-//    }
+    @Test
+    public void updateBlockStorage() throws RestClientException, IOException, InterruptedException {
+        TestHelper.waitBlockStorageReady(blockStorageResponse.getId());
+        UpdateBlockStorageRequest request = new UpdateBlockStorageRequest();
+        request.setName(blockStorageResponse.getName() + " - Updated" + rand.nextInt(900));
+        request.setDescription(blockStorageResponse.getDescription() + "Updated");
+
+        BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().updateBlockStorage(blockStorageResponse.getId(), request);
+        assertNotNull(result);
+        assertNotNull(result.getId());
+
+        TestHelper.waitBlockStorageReady(blockStorageResponse.getId());
+        BlockStorageResponse storageResult = oneandoneApi.getBlockStoragesApi().getBlockStorage(blockStorageResponse.getId());
+
+        //check the storage is updated with new values
+        assertNotNull(result.getId());
+        assertEquals(result.getDescription(), storageResult.getDescription());
+        assertEquals(result.getSize(), storageResult.getSize());
+        assertEquals(result.getName(), storageResult.getName());
+    }
 
     @Test
     public void AttachServerToBlockStorage() throws RestClientException, IOException {
         BlockStorageServerRequest serverRequest = new BlockStorageServerRequest();
-        serverRequest.setServerId(serverId);
+        serverRequest.setServer(server.getId());
 
         BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().attachBlockStorageServer(
                 blockStorageResponse.getId(),
@@ -112,22 +112,10 @@ public class BlockStoragesTest {
         assertNotNull(result.getId());
     }
 
-//    @Test
-//    public void getBlockStorageAttachedServer() throws RestClientException, IOException, InterruptedException {
-//        TestHelper.waitBlockStorageReady(blockStorageResponse.getId());
-//        TestHelper.waitServerReady(serverId);
-//
-//        BasicServerResponse result = oneandoneApi.getBlockStoragesApi().getBlockStorageServer(blockStorageResponse.getId());
-//
-//        assertNotNull(result);
-//        assertNotNull(result.getId());
-//        assertNotNull(result.getName());
-//    }
-
     @Test
     public void DetachServerFromBlockStorage() throws RestClientException, IOException, InterruptedException {
         TestHelper.waitBlockStorageReady(blockStorageResponse.getId());
-        TestHelper.waitServerReady(serverId);
+        TestHelper.waitServerReady(server.getId());
 
         BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().detachBlockStorageServer(blockStorageResponse.getId());
 
@@ -137,11 +125,11 @@ public class BlockStoragesTest {
     @AfterClass
     public static void deleteBlockStorage() throws RestClientException, IOException, InterruptedException {
         TestHelper.waitBlockStorageReady(blockStorageResponse.getId());
-        TestHelper.waitServerReady(serverId);
+        TestHelper.waitServerReady(server.getId());
 
         assertNotNull(oneandoneApi.getBlockStoragesApi().deleteBlockStorage(blockStorageResponse.getId()));
 
-        oneandoneApi.getServerApi().deleteServer(serverId, false);
+        oneandoneApi.getServerApi().deleteServer(server.getId(), false);
     }
 
 }

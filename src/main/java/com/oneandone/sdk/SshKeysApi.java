@@ -128,8 +128,8 @@ public class SshKeysApi extends OneAndOneAPIBase {
      * @throws RestClientException
      * @throws IOException
      */
-    public SshKeyResponse deleteSshKey(String sshKeyId) throws RestClientException, IOException {
-        return client.delete(getUrlBase().concat(resource).concat("/").concat(sshKeyId), SshKeyResponse.class);
+    public Object deleteSshKey(String sshKeyId) throws RestClientException, IOException {
+        return client.delete200(getUrlBase().concat(resource).concat("/").concat(sshKeyId), Object.class);
     }
 
     /**
@@ -142,6 +142,6 @@ public class SshKeysApi extends OneAndOneAPIBase {
      * @throws IOException
      */
     public SshKeyResponse updateSshKey(String sshKeyId, UpdateSshKeyRequest object) throws RestClientException, IOException {
-        return client.update(getUrlBase().concat(resource).concat("/").concat(sshKeyId), object, SshKeyResponse.class, 202);
+        return client.update(getUrlBase().concat(resource).concat("/").concat(sshKeyId), object, SshKeyResponse.class, 200);
     }
 }

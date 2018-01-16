@@ -31,6 +31,7 @@ This guide contains instructions on getting started with the library and automat
   - [Pricing](#pricing)
   - [Data Centers](#data-centers)
   - [Block Storages](#block-storages)
+  - [SSH Keys](#ssh-keys)
 - [Example](#example)
 - [Index](#index)
 
@@ -1688,6 +1689,50 @@ BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().attachBlockStor
 **Detach a server from a block storage:**
 
 `BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().detachBlockStorageServer(blockStorageId);`
+
+### SSH Keys
+
+**List all SshKeys:**
+
+`List<SshKeyResponse> result = oneandoneApi.getSshKeysApi().getSshKeys(0, 0, null, null, null);`
+
+To paginate the list of SshKeys received in the response use `page` and `per_page` parameters. Set ` per_page` to the number of SSH Keys that will be shown in each page. `page` indicates the current page. When set to an integer value that is less or equal to zero, the parameters are ignored by the framework.
+
+To receive the list of SshKeys sorted in expected order pass an SshKey property (e.g. `"name"`) in `sort` parameter. Prefix the sorting attribute with `-` sign for sorting in descending order.
+
+Use `query` parameter to search for a string in the response and return only the SshKey instances that contain it.
+
+To retrieve a collection of SshKeys containing only the requested fields pass a list of comma separated properties (e.g. `"id,name,creation_date"`) in `fields` parameter.
+
+If any of the parameters `sort`, `query` or `fields` is set to an empty string, it is ignored in the request.
+
+**Retrieve information about an SshKey:**
+
+`SshKeyResponse result = oneandoneApi.getSshKeysApi().getSshKey(sshKeyId);`
+
+**Create an SskKey:**
+
+```
+CreateSshKeyRequest request = new CreateSshKeyRequest();
+request.setName(name);
+request.setDescription(description);
+request.setPublicKey("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABBAACAQC3Sn8qRLZ...");
+
+sshKey = oneandoneApi.getSshKeysApi().createSshKey(request);
+```
+
+**Modify an SshKey:**
+
+```
+UpdateSshKeyRequest request = new UpdateSshKeyRequest();
+request.setName(name);
+request.setDescription(description);
+SshKeyResponse result = oneandoneApi.getSshKeysApi().updateSshKey(sshKeyId, request);
+```
+
+**Delete an SshKey:**
+
+`SshKeyResponse result = oneandoneApi.getSshKeysApi().deleteSshKey(sshKeyId);`
 
 
 ## Example

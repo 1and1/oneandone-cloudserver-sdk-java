@@ -643,6 +643,7 @@ public class OneAndOneApi {
      * @return
      */
     public SshKeysApi getSshKeysApi() {
+        this.sshKeysApi.setToken(token);
         return sshKeysApi;
     }
 

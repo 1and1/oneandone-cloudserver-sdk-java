@@ -97,10 +97,6 @@ public class SshKeysTests {
 
     @AfterClass
     public static void deleteSshKey() throws RestClientException, IOException {
-        SshKeyResponse result = oneandoneApi.getSshKeysApi().deleteSshKey(sshKey.getId());
-
-        assertNotNull(result);
-        assertNotNull(result.getId());
-        assertEquals(result.getState(), "DELETING");
+        assertNotNull(oneandoneApi.getSshKeysApi().deleteSshKey(sshKey.getId()));
     }
 }

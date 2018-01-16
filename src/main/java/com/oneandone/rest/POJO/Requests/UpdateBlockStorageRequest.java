@@ -23,7 +23,6 @@ public class UpdateBlockStorageRequest extends BaseRequest {
 
     private String name;
     private String description;
-    private int size;
 
     /**
      * @return the name
@@ -51,20 +50,6 @@ public class UpdateBlockStorageRequest extends BaseRequest {
      */
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    /**
-     * @return the size
-     */
-    public int getSize() {
-        return size;
-    }
-
-    /**
-     * @param size the size to set
-     */
-    public void setSize(int size) {
-        this.size = size;
     }
 
 }

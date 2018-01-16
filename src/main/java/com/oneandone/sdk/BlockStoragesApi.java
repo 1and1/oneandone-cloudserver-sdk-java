@@ -137,7 +137,7 @@ public class BlockStoragesApi extends OneAndOneAPIBase {
      * @throws IOException
      */
     public BlockStorageResponse updateBlockStorage(String blockStorageId, UpdateBlockStorageRequest object) throws RestClientException, IOException {
-        return client.update(getUrlBase().concat(resource).concat("/").concat(blockStorageId), object, BlockStorageResponse.class, 202);
+        return client.update(getUrlBase().concat(resource).concat("/").concat(blockStorageId), object, BlockStorageResponse.class, 200);
     }
 
     /**
@@ -153,7 +153,7 @@ public class BlockStoragesApi extends OneAndOneAPIBase {
      * @throws NoSuchMethodException
      */
     public BlockStorageResponse attachBlockStorageServer(String blockStorageId, BlockStorageServerRequest object) throws RestClientException, IOException {
-        return client.create(getUrlBase().concat(resource).concat("/").concat(blockStorageId).concat("/server"), object, BlockStorageResponse.class, 202);
+        return client.create(getUrlBase().concat(resource).concat("/").concat(blockStorageId).concat("/server"), object, BlockStorageResponse.class, 201);
     }
 
     /**
@@ -175,7 +175,7 @@ public class BlockStoragesApi extends OneAndOneAPIBase {
      * @throws IOException
      */
     public BlockStorageResponse detachBlockStorageServer(String blockStorageId) throws RestClientException, IOException {
-        return client.delete(getUrlBase().concat(resource).concat("/").concat(blockStorageId).concat("/server"), BlockStorageResponse.class);
+        return client.delete200(getUrlBase().concat(resource).concat("/").concat(blockStorageId).concat("/server"), BlockStorageResponse.class);
     }
 
 }

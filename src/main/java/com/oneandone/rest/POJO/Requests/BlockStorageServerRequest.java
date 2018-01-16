@@ -23,20 +23,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class BlockStorageServerRequest extends BaseRequest{
 
-    @JsonProperty("server_id")
-    private String serverId;
+    private String server;
 
     /**
-     * @return the id of the server
+     * The ID of the Server to attach
+     * @return
      */
-    public String getServerId() {
-        return serverId;
+    public String getServer() {
+        return server;
     }
 
     /**
-     * @param serverId the server id to set
+     * The ID of the Server to attach
+     * @param server
      */
-    public void setServerId(String serverId) {
-        this.serverId = serverId;
+    public void setServer(String server) {
+        this.server = server;
     }
 }
