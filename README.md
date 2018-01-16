@@ -2485,3 +2485,18 @@ BlockStorageServerResponse getBlockStorageServer(String blockStorageId) throws R
 ```Java
 BlockStorageResponse detachBlockStorageServer(String blockStorageId) throws RestClientException, IOException
 ```
+```Java
+List<SshKeyResponse> getSshKeys(int page, int perPage, String sort, String query, String fields) throws RestClientException, IOException
+```
+```Java
+SshKeyResponse getSshKey(String sshKeyId) throws RestClientException, IOException
+```
+```Java
+SshKeyResponse createSshKey(CreateSshKeyRequest object) throws RestClientException, IOException
+```
+```Java
+Object deleteSshKey(String sshKeyId) throws RestClientException, IOException
+```
+```Java
+SshKeyResponse updateSshKey(String sshKeyId, UpdateSshKeyRequest object) throws RestClientException, IOException
+```
