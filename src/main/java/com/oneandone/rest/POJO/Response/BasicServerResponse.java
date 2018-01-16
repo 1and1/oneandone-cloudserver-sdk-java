@@ -19,7 +19,7 @@ package com.oneandone.rest.POJO.Response;
  *
  * @author aajdinov
  */
-public class BlockStorageServerResponse {
+public class BasicServerResponse {
 
     private String id;
     private String name;

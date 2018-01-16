@@ -19,7 +19,7 @@ import com.oneandone.rest.POJO.Requests.BlockStorageServerRequest;
 import com.oneandone.rest.POJO.Requests.CreateBlockStorageRequest;
 import com.oneandone.rest.POJO.Requests.UpdateBlockStorageRequest;
 import com.oneandone.rest.POJO.Response.BlockStorageResponse;
-import com.oneandone.rest.POJO.Response.BlockStorageServerResponse;
+import com.oneandone.rest.POJO.Response.BasicServerResponse;
 import com.oneandone.rest.client.RestClientException;
 
 import java.io.IOException;
@@ -159,12 +159,12 @@ public class BlockStoragesApi extends OneAndOneAPIBase {
     /**
      * Returns information about the server attached to a block storage.
      * @param blockStorageId Unique block storage's identifier.
-     * @return BlockStorageServerResponse
+     * @return BasicServerResponse
      * @throws RestClientException
      * @throws IOException
      */
-    public BlockStorageServerResponse getBlockStorageServer(String blockStorageId) throws RestClientException, IOException {
-        return client.get(getUrlBase().concat(resource).concat("/").concat(blockStorageId).concat("/server"), null, BlockStorageServerResponse.class);
+    public BasicServerResponse getBlockStorageServer(String blockStorageId) throws RestClientException, IOException {
+        return client.get(getUrlBase().concat(resource).concat("/").concat(blockStorageId).concat("/server"), null, BasicServerResponse.class);
     }
 
     /**

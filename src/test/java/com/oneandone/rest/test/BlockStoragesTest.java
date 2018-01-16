@@ -16,11 +16,8 @@
 package com.oneandone.rest.test;
 
 import com.oneandone.rest.POJO.Requests.CreateBlockStorageRequest;
-import com.oneandone.rest.POJO.Requests.UpdateBlockStorageRequest;
 import com.oneandone.rest.POJO.Requests.BlockStorageServerRequest;
 import com.oneandone.rest.POJO.Response.BlockStorageResponse;
-import com.oneandone.rest.POJO.Response.BlockStorageServerResponse;
-import com.oneandone.rest.POJO.Response.BlockStorageDataCenterResponse;
 import com.oneandone.rest.POJO.Response.DataCenter;
 
 import com.oneandone.rest.client.RestClientException;
@@ -30,7 +27,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -121,7 +117,7 @@ public class BlockStoragesTest {
 //        TestHelper.waitBlockStorageReady(blockStorageResponse.getId());
 //        TestHelper.waitServerReady(serverId);
 //
-//        BlockStorageServerResponse result = oneandoneApi.getBlockStoragesApi().getBlockStorageServer(blockStorageResponse.getId());
+//        BasicServerResponse result = oneandoneApi.getBlockStoragesApi().getBlockStorageServer(blockStorageResponse.getId());
 //
 //        assertNotNull(result);
 //        assertNotNull(result.getId());

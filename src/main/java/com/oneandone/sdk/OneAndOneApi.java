@@ -16,7 +16,6 @@
 package com.oneandone.sdk;
 
 import com.oneandone.rest.client.ConfigReader;
-import jdk.nashorn.internal.ir.Block;
 
 import java.util.Properties;
 
@@ -63,6 +62,7 @@ public class OneAndOneApi {
         this.pingApi = new PingApi();
         this.priceApi=new PriceApi();
         this.blockStoragesApi=new BlockStoragesApi();
+        this.sshKeysApi=new SshKeysApi();
     }
 
     private ImageApi imageApi;
@@ -100,6 +100,7 @@ public class OneAndOneApi {
     private PingApi pingApi;
     private PriceApi priceApi;
     private BlockStoragesApi blockStoragesApi;
+    private SshKeysApi sshKeysApi;
 
     /**
      * @return the imageApi
@@ -635,5 +636,21 @@ public class OneAndOneApi {
      */
     public void setBlockStoragesApi(BlockStoragesApi blockStoragesApi) {
         this.blockStoragesApi = blockStoragesApi;
+    }
+
+    /**
+     * the sshKeysApi
+     * @return
+     */
+    public SshKeysApi getSshKeysApi() {
+        return sshKeysApi;
+    }
+
+    /**
+     * the sshKeysApi to set
+     * @param sshKeysApi
+     */
+    public void setSshKeysApi(SshKeysApi sshKeysApi) {
+        this.sshKeysApi = sshKeysApi;
     }
 }

@@ -17,8 +17,6 @@ package com.oneandone.rest.POJO.Response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
-
 /**
  *
  * @author aajdinov
@@ -33,7 +31,7 @@ public class BlockStorageResponse {
     private String name;
     @JsonProperty("creation_date")
     private String creationDate;
-    private BlockStorageServerResponse server;
+    private BasicServerResponse server;
 
     /**
      * @return Block storage ID
@@ -136,14 +134,14 @@ public class BlockStorageResponse {
     /**
      * @return Server allowed to access to the block storage
      */
-    public BlockStorageServerResponse getServer() {
+    public BasicServerResponse getServer() {
         return server;
     }
 
     /**
      * @param server the servers to set
      */
-    public void setServer(BlockStorageServerResponse server) {
+    public void setServer(BasicServerResponse server) {
         this.server = server;
     }
 
