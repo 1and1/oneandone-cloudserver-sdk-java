@@ -30,6 +30,7 @@ This guide contains instructions on getting started with the library and automat
   - [Ping](#ping)
   - [Pricing](#pricing)
   - [Data Centers](#data-centers)
+  - [Block Storages](#block-storages)
 - [Example](#example)
 - [Index](#index)
 
@@ -1617,6 +1618,78 @@ The response is an Enum Either `PONG`. if the API is running and the token is va
 
 `DataCenter result = oneandoneApi.getDataCenterApi().getDataCenter(datacenter_id);`
 
+### Block Storages
+
+**List block storages:**
+
+`List<BlockStorageResponse> result = oneandoneApi.getBlockStoragesApi().getBlockStorages(0, 0, null, null, null);`
+
+To paginate the list of block storages received in the response use `page` and `per_page` parameters. Set `per_page` to the number of block storages that will be shown in each page. `page` indicates the current page. When set to an integer value that is less than or equal to zero, the parameters are ignored by the framework.
+
+To receive the list of block storages sorted in expected order, pass a volume property (e.g. `"name"`) in `sort` parameter. Prefix the sorting attribute with `-` sign for sorting in descending order.
+
+Use `query` parameter to search for a string in the response and return only the block storage instances that contain it.
+
+To retrieve a collection of block storages containing only the requested fields, pass a list of comma-separated properties (e.g. `"id,name,size"`) in `fields` parameter.
+
+If any of the parameters `sort`, `query` or `fields` is set to an empty string, it is ignored in the request.
+
+**Retrieve a block storage:**
+
+`BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().getBlockStorage(blockStorageId());`
+
+
+**Create a block storage:**
+
+```
+CreateBlockStorageRequest request = new CreateBlockStorageRequest();
+request.setName(name);
+request.setDescription(description);
+request.setSize(size);
+request.setDataCenterId(dataCenterId);
+
+BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().createBlockStorage(request);
+```
+
+`Description` is optional parameter.
+
+
+**Update a block storage:**
+
+```
+UpdateBlockStorageRequest request = new UpdateBlockStorageRequest();
+request.setName(name);
+request.setDescription(description);
+request.setSize(size);
+BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().updateBlockStorage(blockStorageId(), request);
+```
+All request's parameters are optional.
+
+
+**Remove a block storage:**
+
+`Object result = oneandoneApi.getBlockStoragesApi().deleteBlockStorage(blockStorageId)`
+
+
+**Attach a server to a block storage:**
+
+```
+BlockStorageServerRequest serverRequest = new BlockStorageServerRequest();
+serverRequest.setServerId(serverId);
+BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().attachBlockStorageServer(blockStorageId, serverRequest);
+```
+
+
+**Get the attached server from a block storage:**
+
+`BlockStorageServerResponse result = oneandoneApi.getBlockStoragesApi().getBlockStorageServer(blockStorageId);`
+
+				
+**Detach a server from a block storage:**
+
+`BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().detachBlockStorageServer(blockStorageId);`
+
+
 ## Example
 
 The example below is a main class in java that creates an IP, firewall policy, and a load balancer. After that it creates a server and waits for it to deploy and power on.
@@ -2342,4 +2415,28 @@ List<DataCenter> getDataCenters(int page, int perPage, String sort, String query
 ```
 ```Java
 DataCenter getDataCenter(String dataCenterId) throws RestClientException, IOException
+```
+```Java
+List<BlockStorageResponse> getBlockStorages(int page, int perPage, String sort, String query, String fields) throws RestClientException, IOException
+```
+```Java
+BlockStorageResponse getBlockStorage(String blockStorageId) throws RestClientException, IOException
+```
+```Java
+BlockStorageResponse createBlockStorage(CreateBlockStorageRequest object) throws RestClientException, IOException
+```
+```Java
+Object deleteBlockStorage(String blockStorageId) throws RestClientException, IOException
+```
+```Java
+BlockStorageResponse updateBlockStorage(String blockStorageId, UpdateBlockStorageRequest object) throws RestClientException, IOException
+```
+```Java
+BlockStorageResponse attachBlockStorageServer(String blockStorageId, BlockStorageServerRequest object) throws RestClientException, IOException
+```
+```Java
+BlockStorageServerResponse getBlockStorageServer(String blockStorageId) throws RestClientException, IOException
+```
+```Java
+BlockStorageResponse detachBlockStorageServer(String blockStorageId) throws RestClientException, IOException
 ```
