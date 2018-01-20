@@ -1672,23 +1672,18 @@ All request's parameters are optional.
 `Object result = oneandoneApi.getBlockStoragesApi().deleteBlockStorage(blockStorageId)`
 
 
-**Attach a server to a block storage:**
+**Attach a block storage to a server:**
 
 ```
 BlockStorageServerRequest serverRequest = new BlockStorageServerRequest();
 serverRequest.setServerId(serverId);
-BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().attachBlockStorageServer(blockStorageId, serverRequest);
+BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().attachBlockStorage(blockStorageId, serverRequest);
 ```
 
-
-**Get the attached server from a block storage:**
-
-`BlockStorageServerResponse result = oneandoneApi.getBlockStoragesApi().getBlockStorageServer(blockStorageId);`
-
 				
-**Detach a server from a block storage:**
+**Detach a block storage from a server:**
 
-`BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().detachBlockStorageServer(blockStorageId);`
+`BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().detachBlockStorage(blockStorageId);`
 
 ### SSH Keys
 
@@ -2477,13 +2472,10 @@ Object deleteBlockStorage(String blockStorageId) throws RestClientException, IOE
 BlockStorageResponse updateBlockStorage(String blockStorageId, UpdateBlockStorageRequest object) throws RestClientException, IOException
 ```
 ```Java
-BlockStorageResponse attachBlockStorageServer(String blockStorageId, BlockStorageServerRequest object) throws RestClientException, IOException
+BlockStorageResponse attachBlockStorage(String blockStorageId, BlockStorageServerRequest object) throws RestClientException, IOException
 ```
 ```Java
-BlockStorageServerResponse getBlockStorageServer(String blockStorageId) throws RestClientException, IOException
-```
-```Java
-BlockStorageResponse detachBlockStorageServer(String blockStorageId) throws RestClientException, IOException
+BlockStorageResponse detachBlockStorage(String blockStorageId) throws RestClientException, IOException
 ```
 ```Java
 List<SshKeyResponse> getSshKeys(int page, int perPage, String sort, String query, String fields) throws RestClientException, IOException

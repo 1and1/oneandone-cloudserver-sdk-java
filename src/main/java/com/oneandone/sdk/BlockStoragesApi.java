@@ -141,7 +141,7 @@ public class BlockStoragesApi extends OneAndOneAPIBase {
     }
 
     /**
-     * Attaches a server to a block storage.
+     * Attaches a block storage to a server.
      * @param object BlockStorageServerRequest
      * @param blockStorageId Unique block storage's identifier.
      * @return BlockStorageResponse
@@ -152,29 +152,18 @@ public class BlockStoragesApi extends OneAndOneAPIBase {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    public BlockStorageResponse attachBlockStorageServer(String blockStorageId, BlockStorageServerRequest object) throws RestClientException, IOException {
+    public BlockStorageResponse attachBlockStorage(String blockStorageId, BlockStorageServerRequest object) throws RestClientException, IOException {
         return client.create(getUrlBase().concat(resource).concat("/").concat(blockStorageId).concat("/server"), object, BlockStorageResponse.class, 201);
     }
 
     /**
-     * Returns information about the server attached to a block storage.
-     * @param blockStorageId Unique block storage's identifier.
-     * @return BasicServerResponse
-     * @throws RestClientException
-     * @throws IOException
-     */
-    public BasicServerResponse getBlockStorageServer(String blockStorageId) throws RestClientException, IOException {
-        return client.get(getUrlBase().concat(resource).concat("/").concat(blockStorageId).concat("/server"), null, BasicServerResponse.class);
-    }
-
-    /**
-     * Detaches a server from a block storage.
+     * Detaches a block storage from a server.
      * @param blockStorageId Unique block storage's identifier.
      * @return BlockStorageResponse
      * @throws RestClientException
      * @throws IOException
      */
-    public BlockStorageResponse detachBlockStorageServer(String blockStorageId) throws RestClientException, IOException {
+    public BlockStorageResponse detachBlockStorage(String blockStorageId) throws RestClientException, IOException {
         return client.delete200(getUrlBase().concat(resource).concat("/").concat(blockStorageId).concat("/server"), BlockStorageResponse.class);
     }
 

@@ -100,11 +100,11 @@ public class BlockStoragesTest {
     }
 
     @Test
-    public void AttachServerToBlockStorage() throws RestClientException, IOException {
+    public void AttachBlockStorageToServer() throws RestClientException, IOException {
         BlockStorageServerRequest serverRequest = new BlockStorageServerRequest();
         serverRequest.setServer(server.getId());
 
-        BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().attachBlockStorageServer(
+        BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().attachBlockStorage(
                 blockStorageResponse.getId(),
                 serverRequest);
 
@@ -113,11 +113,11 @@ public class BlockStoragesTest {
     }
 
     @Test
-    public void DetachServerFromBlockStorage() throws RestClientException, IOException, InterruptedException {
+    public void DetachBlockStorageFromServer() throws RestClientException, IOException, InterruptedException {
         TestHelper.waitBlockStorageReady(blockStorageResponse.getId());
         TestHelper.waitServerReady(server.getId());
 
-        BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().detachBlockStorageServer(blockStorageResponse.getId());
+        BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().detachBlockStorage(blockStorageResponse.getId());
 
         assertNotNull(result);
     }
