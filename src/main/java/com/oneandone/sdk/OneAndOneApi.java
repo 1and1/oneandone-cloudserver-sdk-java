@@ -16,6 +16,7 @@
 package com.oneandone.sdk;
 
 import com.oneandone.rest.client.ConfigReader;
+
 import java.util.Properties;
 
 public class OneAndOneApi {
@@ -60,6 +61,8 @@ public class OneAndOneApi {
         this.roleUsersApi = new RoleUsersApi();
         this.pingApi = new PingApi();
         this.priceApi=new PriceApi();
+        this.blockStoragesApi=new BlockStoragesApi();
+        this.sshKeysApi=new SshKeysApi();
     }
 
     private ImageApi imageApi;
@@ -96,6 +99,8 @@ public class OneAndOneApi {
     private RoleUsersApi roleUsersApi;
     private PingApi pingApi;
     private PriceApi priceApi;
+    private BlockStoragesApi blockStoragesApi;
+    private SshKeysApi sshKeysApi;
 
     /**
      * @return the imageApi
@@ -616,5 +621,37 @@ public class OneAndOneApi {
      */
     public void setPriceApi(PriceApi priceApi) {
         this.priceApi = priceApi;
+    }
+
+    /**
+     * @return the blockStoragesApi
+     */
+    public BlockStoragesApi getBlockStoragesApi() {
+        this.blockStoragesApi.setToken(token);
+        return blockStoragesApi;
+    }
+
+    /**
+     * @param blockStoragesApi the blockStoragesApi to set
+     */
+    public void setBlockStoragesApi(BlockStoragesApi blockStoragesApi) {
+        this.blockStoragesApi = blockStoragesApi;
+    }
+
+    /**
+     * the sshKeysApi
+     * @return
+     */
+    public SshKeysApi getSshKeysApi() {
+        this.sshKeysApi.setToken(token);
+        return sshKeysApi;
+    }
+
+    /**
+     * the sshKeysApi to set
+     * @param sshKeysApi
+     */
+    public void setSshKeysApi(SshKeysApi sshKeysApi) {
+        this.sshKeysApi = sshKeysApi;
     }
 }

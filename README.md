@@ -30,6 +30,8 @@ This guide contains instructions on getting started with the library and automat
   - [Ping](#ping)
   - [Pricing](#pricing)
   - [Data Centers](#data-centers)
+  - [Block Storages](#block-storages)
+  - [SSH Keys](#ssh-keys)
 - [Example](#example)
 - [Index](#index)
 
@@ -1617,6 +1619,117 @@ The response is an Enum Either `PONG`. if the API is running and the token is va
 
 `DataCenter result = oneandoneApi.getDataCenterApi().getDataCenter(datacenter_id);`
 
+### Block Storages
+
+**List block storages:**
+
+`List<BlockStorageResponse> result = oneandoneApi.getBlockStoragesApi().getBlockStorages(0, 0, null, null, null);`
+
+To paginate the list of block storages received in the response use `page` and `per_page` parameters. Set `per_page` to the number of block storages that will be shown in each page. `page` indicates the current page. When set to an integer value that is less than or equal to zero, the parameters are ignored by the framework.
+
+To receive the list of block storages sorted in expected order, pass a volume property (e.g. `"name"`) in `sort` parameter. Prefix the sorting attribute with `-` sign for sorting in descending order.
+
+Use `query` parameter to search for a string in the response and return only the block storage instances that contain it.
+
+To retrieve a collection of block storages containing only the requested fields, pass a list of comma-separated properties (e.g. `"id,name,size"`) in `fields` parameter.
+
+If any of the parameters `sort`, `query` or `fields` is set to an empty string, it is ignored in the request.
+
+**Retrieve a block storage:**
+
+`BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().getBlockStorage(blockStorageId());`
+
+
+**Create a block storage:**
+
+```
+CreateBlockStorageRequest request = new CreateBlockStorageRequest();
+request.setName(name);
+request.setDescription(description);
+request.setSize(size);
+request.setDataCenterId(dataCenterId);
+
+BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().createBlockStorage(request);
+```
+
+`Description` is optional parameter.
+
+
+**Update a block storage:**
+
+```
+UpdateBlockStorageRequest request = new UpdateBlockStorageRequest();
+request.setName(name);
+request.setDescription(description);
+request.setSize(size);
+BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().updateBlockStorage(blockStorageId(), request);
+```
+All request's parameters are optional.
+
+
+**Remove a block storage:**
+
+`Object result = oneandoneApi.getBlockStoragesApi().deleteBlockStorage(blockStorageId)`
+
+
+**Attach a block storage to a server:**
+
+```
+BlockStorageServerRequest serverRequest = new BlockStorageServerRequest();
+serverRequest.setServerId(serverId);
+BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().attachBlockStorage(blockStorageId, serverRequest);
+```
+
+				
+**Detach a block storage from a server:**
+
+`BlockStorageResponse result = oneandoneApi.getBlockStoragesApi().detachBlockStorage(blockStorageId);`
+
+### SSH Keys
+
+**List all SshKeys:**
+
+`List<SshKeyResponse> result = oneandoneApi.getSshKeysApi().getSshKeys(0, 0, null, null, null);`
+
+To paginate the list of SshKeys received in the response use `page` and `per_page` parameters. Set ` per_page` to the number of SSH Keys that will be shown in each page. `page` indicates the current page. When set to an integer value that is less or equal to zero, the parameters are ignored by the framework.
+
+To receive the list of SshKeys sorted in expected order pass an SshKey property (e.g. `"name"`) in `sort` parameter. Prefix the sorting attribute with `-` sign for sorting in descending order.
+
+Use `query` parameter to search for a string in the response and return only the SshKey instances that contain it.
+
+To retrieve a collection of SshKeys containing only the requested fields pass a list of comma separated properties (e.g. `"id,name,creation_date"`) in `fields` parameter.
+
+If any of the parameters `sort`, `query` or `fields` is set to an empty string, it is ignored in the request.
+
+**Retrieve information about an SshKey:**
+
+`SshKeyResponse result = oneandoneApi.getSshKeysApi().getSshKey(sshKeyId);`
+
+**Create an SskKey:**
+
+```
+CreateSshKeyRequest request = new CreateSshKeyRequest();
+request.setName(name);
+request.setDescription(description);
+request.setPublicKey("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABBAACAQC3Sn8qRLZ...");
+
+sshKey = oneandoneApi.getSshKeysApi().createSshKey(request);
+```
+
+**Modify an SshKey:**
+
+```
+UpdateSshKeyRequest request = new UpdateSshKeyRequest();
+request.setName(name);
+request.setDescription(description);
+SshKeyResponse result = oneandoneApi.getSshKeysApi().updateSshKey(sshKeyId, request);
+```
+
+**Delete an SshKey:**
+
+`SshKeyResponse result = oneandoneApi.getSshKeysApi().deleteSshKey(sshKeyId);`
+
+
 ## Example
 
 The example below is a main class in java that creates an IP, firewall policy, and a load balancer. After that it creates a server and waits for it to deploy and power on.
@@ -2342,4 +2455,40 @@ List<DataCenter> getDataCenters(int page, int perPage, String sort, String query
 ```
 ```Java
 DataCenter getDataCenter(String dataCenterId) throws RestClientException, IOException
+```
+```Java
+List<BlockStorageResponse> getBlockStorages(int page, int perPage, String sort, String query, String fields) throws RestClientException, IOException
+```
+```Java
+BlockStorageResponse getBlockStorage(String blockStorageId) throws RestClientException, IOException
+```
+```Java
+BlockStorageResponse createBlockStorage(CreateBlockStorageRequest object) throws RestClientException, IOException
+```
+```Java
+Object deleteBlockStorage(String blockStorageId) throws RestClientException, IOException
+```
+```Java
+BlockStorageResponse updateBlockStorage(String blockStorageId, UpdateBlockStorageRequest object) throws RestClientException, IOException
+```
+```Java
+BlockStorageResponse attachBlockStorage(String blockStorageId, BlockStorageServerRequest object) throws RestClientException, IOException
+```
+```Java
+BlockStorageResponse detachBlockStorage(String blockStorageId) throws RestClientException, IOException
+```
+```Java
+List<SshKeyResponse> getSshKeys(int page, int perPage, String sort, String query, String fields) throws RestClientException, IOException
+```
+```Java
+SshKeyResponse getSshKey(String sshKeyId) throws RestClientException, IOException
+```
+```Java
+SshKeyResponse createSshKey(CreateSshKeyRequest object) throws RestClientException, IOException
+```
+```Java
+Object deleteSshKey(String sshKeyId) throws RestClientException, IOException
+```
+```Java
+SshKeyResponse updateSshKey(String sshKeyId, UpdateSshKeyRequest object) throws RestClientException, IOException
 ```
