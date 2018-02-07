@@ -26,6 +26,7 @@ import com.oneandone.rest.POJO.Response.PrivateNetworksResponse;
 import com.oneandone.rest.POJO.Response.ServerAppliancesResponse;
 import com.oneandone.rest.POJO.Response.ServerResponse;
 import com.oneandone.rest.POJO.Response.SharedStorageResponse;
+import com.oneandone.rest.POJO.Response.BlockStorageResponse;
 import com.oneandone.rest.POJO.Response.Types;
 import com.oneandone.rest.client.RestClientException;
 import com.oneandone.sdk.OneAndOneApi;
@@ -109,6 +110,15 @@ public class TestHelper {
         while ("CONFIGURING".equals(lb.getState())) {
             TimeUnit.SECONDS.sleep(6);
             lb = oneandoneApi.getPrivateNetworkApi().getPrivateNetwork(pnId);
+        }
+    }
+
+    public static void waitBlockStorageReady(String blockStorageId) throws InterruptedException, RestClientException, IOException {
+        TimeUnit.SECONDS.sleep(2);
+        BlockStorageResponse blockStorage = oneandoneApi.getBlockStoragesApi().getBlockStorage(blockStorageId);
+        while ("CONFIGURING".equals(blockStorage.getState())) {
+            TimeUnit.SECONDS.sleep(4);
+            blockStorage = oneandoneApi.getBlockStoragesApi().getBlockStorage(blockStorageId);
         }
     }
 
