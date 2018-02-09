@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.oneandone.rest.POJO.Requests;
+package com.oneandone.rest.POJO.Response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
@@ -22,15 +22,11 @@ import java.util.List;
  *
  * @author aliba
  */
-public class HardwareRequest {
+public class ServerHardware extends HardwareBase {
 
     @JsonProperty("fixed_instance_size_id")
     private String fixedInstanceSizeId;
     private int vcore;
-    @JsonProperty("cores_per_processor")
-    private int coresPerProcessor;
-    private double ram;
-    private List<HddRequest> hdds;
     @JsonProperty("baremetal_model_id")
     private String baremetalModelId;
 
@@ -42,10 +38,10 @@ public class HardwareRequest {
     }
 
     /**
-     * @param fixedInstanceSizeId the fixed_instance_size_id to set
+     * @param fixed_instance_size_id the fixed_instance_size_id to set
      */
-    public void setFixedInstanceSizeId(String fixedInstanceSizeId) {
-        this.fixedInstanceSizeId = fixedInstanceSizeId;
+    public void setFixedInstanceSizeId(String fixed_instance_size_id) {
+        this.fixedInstanceSizeId = fixed_instance_size_id;
     }
 
     /**
@@ -63,49 +59,6 @@ public class HardwareRequest {
     }
 
     /**
-     * @return the cores_per_processor
-     */
-    public int getCoresPerProcessor() {
-        return coresPerProcessor;
-    }
-
-    /**
-     * @param coresPerProcessor the cores_per_processor to set
-     */
-    public void setCoresPerProcessor(int coresPerProcessor) {
-        this.coresPerProcessor = coresPerProcessor;
-    }
-
-    /**
-     * @return the ram
-     */
-    public double getRam() {
-        return ram;
-    }
-
-    /**
-     * @param ram the ram to set
-     */
-    public void setRam(double ram) {
-        this.ram = ram;
-    }
-
-    /**
-     * @return the hdds
-     */
-    public List<HddRequest> getHdds() {
-        return hdds;
-    }
-
-    /**
-     * @param hdds the hdds to set
-     */
-    public void setHdds(List<HddRequest> hdds) {
-        this.hdds = hdds;
-    }
-
-
-    /**
      * @return the baremetal_model_id
      */
     public String getBaremetalModelId() {
@@ -113,9 +66,10 @@ public class HardwareRequest {
     }
 
     /**
-     * @param baremetalModelId tha baremetal_model_id to set
+     * @param baremetalModelId the baremetal_model_id to set
      */
     public void setBaremetalModelId(String baremetalModelId) {
         this.baremetalModelId = baremetalModelId;
     }
+
 }

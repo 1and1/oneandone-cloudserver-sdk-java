@@ -15,6 +15,7 @@
  */
 package com.oneandone.rest.POJO.Response;
 
+import com.oneandone.rest.POJO.Response.Types.ServerTypeCompatibility;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,8 @@ public class ServerAppliancesResponse {
     private List<Object> categories = new ArrayList<Object>();
     @JsonProperty("eula_url")
     private Object eulaUrl;
+    @JsonProperty("server_type_compatibility")
+    private List<ServerTypeCompatibility> serverTypeCompatibility;
 
     /**
      *
@@ -285,5 +288,15 @@ public class ServerAppliancesResponse {
     public void setEulaUrl(Object eulaUrl) {
         this.eulaUrl = eulaUrl;
     }
+
+    /**
+     * @return the server_type_compatibility
+     */
+    public List<ServerTypeCompatibility> getServerTypeCompatibility() { return serverTypeCompatibility; }
+
+    /**
+     * @param serverTypeCompatibility the server_type_compatibility to set
+     */
+    public void setServerTypeCompatibility(List<ServerTypeCompatibility> serverTypeCompatibility) { this.serverTypeCompatibility = serverTypeCompatibility; }
 
 }

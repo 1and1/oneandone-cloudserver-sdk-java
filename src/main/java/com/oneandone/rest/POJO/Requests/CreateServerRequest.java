@@ -17,33 +17,36 @@
 package com.oneandone.rest.POJO.Requests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.oneandone.rest.POJO.Response.Types.ServerType;
 
 /**
  *
  * @author aliba
  */
-public class CreateServerRequest extends BaseRequest{
+public class CreateServerRequest extends BaseRequest {
 
-        private String name;
-        private String description;
-        private HardwareRequest hardware;
-        @JsonProperty("appliance_id")
-        private String applianceId;
-        @JsonProperty("datacenter_id")
-        private String datacenterId;
-        private String password;
-        @JsonProperty("rsa_key")
-        private String rsaKey;
-        @JsonProperty("power_on")
-        private Boolean powerOn;
-        @JsonProperty("firewall_policy_id")
-        private String firewallPolicyId;
-        @JsonProperty("ip_id")
-        private String ipId;
-        @JsonProperty("loadr_balancer_id")
-        private String loadrBalancerId;
-        @JsonProperty("monitoring_policy_id")
-        private String monitoringPolicyId;
+    private String name;
+    private String description;
+    private HardwareRequest hardware;
+    @JsonProperty("appliance_id")
+    private String applianceId;
+    @JsonProperty("datacenter_id")
+    private String datacenterId;
+    private String password;
+    @JsonProperty("rsa_key")
+    private String rsaKey;
+    @JsonProperty("power_on")
+    private Boolean powerOn;
+    @JsonProperty("firewall_policy_id")
+    private String firewallPolicyId;
+    @JsonProperty("ip_id")
+    private String ipId;
+    @JsonProperty("loadr_balancer_id")
+    private String loadrBalancerId;
+    @JsonProperty("monitoring_policy_id")
+    private String monitoringPolicyId;
+    @JsonProperty("server_type")
+    private ServerType serverType;
 
     /**
      * @return the name
@@ -81,7 +84,7 @@ public class CreateServerRequest extends BaseRequest{
     }
 
     /**
-     * @param hardware Required: Hardware features of the server. Choose your resources using fixed_instance_size_id or customizing your hardware.
+     * @param hardware Required: ServerHardware features of the server. Choose your resources using fixed_instance_size_id or customizing your hardware.
      */
     public void setHardware(HardwareRequest hardware) {
         this.hardware = hardware;
@@ -212,4 +215,14 @@ public class CreateServerRequest extends BaseRequest{
     public void setMonitoringPolicyId(String monitoringPolicyId) {
         this.monitoringPolicyId = monitoringPolicyId;
     }
+
+    /**
+     * @return the server_type
+     */
+    public ServerType getServerType() { return serverType; }
+
+    /**
+     * @param serverType  the server_type to set
+     */
+    public void setServerType(ServerType serverType) { this.serverType = serverType; }
 }

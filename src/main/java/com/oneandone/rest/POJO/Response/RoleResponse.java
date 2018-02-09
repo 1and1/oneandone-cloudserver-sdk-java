@@ -34,6 +34,8 @@ public class RoleResponse {
     private String description;
     @JsonProperty("state")
     private RoleState state;
+    @JsonProperty("default")
+    private String _default;
     @JsonProperty("creation_date")
     private String creationDate;
     @JsonProperty("users")
@@ -112,6 +114,20 @@ public class RoleResponse {
     public void setState(RoleState state) {
         this.state = state;
     }
+
+    /**
+     *
+     * @return Default panel roles (1)
+     */
+    @JsonProperty("default")
+    public String get_default() { return _default; }
+
+    /**
+     *
+     * @param _default Define default panel roles (1)
+     */
+    @JsonProperty("default")
+    public void set_default(String _default) { this._default = _default; }
 
     /**
      *

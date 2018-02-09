@@ -15,6 +15,7 @@
  */
 package com.oneandone.rest.POJO.Response;
 
+import com.oneandone.rest.POJO.Response.Types.ServerTypeCompatibility;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,6 +107,8 @@ public class ServerAppliancesExtendedResponse {
     @JsonProperty("fast_deploy_sites")
     private List<String> fastDeploySites;
     private List<Object> software;
+    @JsonProperty("server_type_compatibility")
+    private List<ServerTypeCompatibility> serverTypeCompatibility;
 
     /**
      *
@@ -768,4 +771,14 @@ public class ServerAppliancesExtendedResponse {
     public void setSoftware(List<Object> software) {
         this.software = software;
     }
+
+    /**
+     * @return the server_type_compatibility
+     */
+    public List<ServerTypeCompatibility> getServerTypeCompatibility() { return serverTypeCompatibility; }
+
+    /**
+     * @param serverTypeCompatibility the server_type_compatibility to set
+     */
+    public void setServerTypeCompatibility(List<ServerTypeCompatibility> serverTypeCompatibility) { this.serverTypeCompatibility = serverTypeCompatibility; }
 }

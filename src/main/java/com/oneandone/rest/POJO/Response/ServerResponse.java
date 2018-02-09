@@ -15,6 +15,7 @@
  */
 package com.oneandone.rest.POJO.Response;
 
+import com.oneandone.rest.POJO.Response.Types.ServerType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -37,7 +38,12 @@ public class ServerResponse {
     @JsonProperty("first_password")
     private String firstPassword;
     private Status status;
-    private Hardware hardware;
+    @JsonProperty("server_type")
+    private ServerType serverType;
+    @JsonProperty("ipv6_range")
+    private String ipv6Range;
+    private String hostname;
+    private ServerHardware hardware;
     private Image image;
     private Dvd dvd;
     private Snapshot snapshot;
@@ -150,16 +156,58 @@ public class ServerResponse {
     }
 
     /**
+     * @return the server type (cloud, baremetal, dedicated)
+     */
+    public ServerType getServerType() {
+        return serverType;
+    }
+
+    /**
+     * @param serverType the server_type to set
+     */
+    public void setServerType(ServerType serverType) {
+        this.serverType = serverType;
+    }
+
+    /**
+     * @return the IPv6 range assigned to the server
+     */
+    public String getIpv6Range() {
+        return ipv6Range;
+    }
+
+    /**
+     * @param ipv6Range the ipv6_range to set
+     */
+    public void setIpv6Range(String ipv6Range) {
+        this.ipv6Range = ipv6Range;
+    }
+
+    /**
+     * @return the hostname assigned to the server
+     */
+    public String getHostname() {
+        return hostname;
+    }
+
+    /**
+     * @param hostname the hostname to set
+     */
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    /**
      * @return the hardware
      */
-    public Hardware getHardware() {
+    public ServerHardware getHardware() {
         return hardware;
     }
 
     /**
      * @param hardware the hardware to set
      */
-    public void setHardware(Hardware hardware) {
+    public void setHardware(ServerHardware hardware) {
         this.hardware = hardware;
     }
 

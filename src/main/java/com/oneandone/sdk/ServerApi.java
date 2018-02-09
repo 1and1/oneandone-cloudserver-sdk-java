@@ -15,19 +15,17 @@
  */
 package com.oneandone.sdk;
 
+import com.oneandone.rest.POJO.Response.*;
 import com.oneandone.rest.client.RestClientException;
-import com.oneandone.rest.POJO.Response.AvailableHardwareFlavour;
-import com.oneandone.rest.POJO.Response.PrivateNetwork;
 import com.oneandone.rest.POJO.Requests.CreateCloneRequest;
 import com.oneandone.rest.POJO.Requests.CreateFixedInstanceServerRequest;
 import com.oneandone.rest.POJO.Requests.CreateServerRequest;
 import com.oneandone.rest.POJO.Requests.IdRequest;
 import com.oneandone.rest.POJO.Requests.UpdateServerRequest;
 import com.oneandone.rest.POJO.Requests.UpdateStatusRequest;
-import com.oneandone.rest.POJO.Response.ServerPrivateNetwork;
-import com.oneandone.rest.POJO.Response.ServerResponse;
-import com.oneandone.rest.POJO.Response.Snapshot;
-import com.oneandone.rest.POJO.Response.Status;
+import com.oneandone.rest.POJO.Response.Types.ServerType;
+import com.oneandone.rest.POJO.Response.Types.ErrorMessages;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -149,6 +147,13 @@ public class ServerApi extends OneAndOneAPIBase {
      * @throws IllegalArgumentException
      */
     public ServerResponse createServer(CreateServerRequest object) throws RestClientException, IOException {
+        if (object.getServerType() == null) {
+            object.setServerType(Types.ServerType.CLOUD);
+        } else {
+            if (object.getServerType().toString() == ServerType.BAREMETAL.toString() && object.getHardware().getBaremetalModelId() == null) {
+                throw new IllegalArgumentException(ErrorMessages.BAREMETAL_MISSING_MODEL_ID.toString());
+            }
+        }
         return client.create(getUrlBase().concat(resource), object, ServerResponse.class, 202);
     }
     

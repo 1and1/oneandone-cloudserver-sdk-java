@@ -22,7 +22,7 @@ import com.oneandone.rest.POJO.Requests.UpdateHardwareRequest;
 import com.oneandone.rest.POJO.Requests.UpdateHddRequest;
 import com.oneandone.rest.POJO.Response.DVDResponse;
 import com.oneandone.rest.POJO.Response.Dvd;
-import com.oneandone.rest.POJO.Response.Hardware;
+import com.oneandone.rest.POJO.Response.ServerHardware;
 import com.oneandone.rest.POJO.Response.Hdd;
 import com.oneandone.rest.POJO.Response.ServerResponse;
 import com.oneandone.rest.client.RestClientException;
@@ -53,7 +53,7 @@ public class ServerHardwareTest {
     public static void getServerHardware() throws RestClientException, IOException, InterruptedException {
         oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
         serverId = CreateTestServer("servers hardware test", false).getId();
-        Hardware serverHardware = oneandoneApi.getServerHardwareApi().getHardware(serverId);
+        ServerHardware serverHardware = oneandoneApi.getServerHardwareApi().getHardware(serverId);
         assertNotNull(serverHardware);
     }
 

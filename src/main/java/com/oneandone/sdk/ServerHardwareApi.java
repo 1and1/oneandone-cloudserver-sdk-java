@@ -15,9 +15,9 @@
  */
 package com.oneandone.sdk;
 
+import com.oneandone.rest.POJO.Response.ServerHardware;
 import com.oneandone.rest.client.RestClientException;
 import com.oneandone.rest.POJO.Response.Dvd;
-import com.oneandone.rest.POJO.Response.Hardware;
 import com.oneandone.rest.POJO.Requests.IdRequest;
 import com.oneandone.rest.POJO.Requests.UpdateHardwareRequest;
 import com.oneandone.rest.POJO.Response.ServerResponse;
@@ -36,12 +36,12 @@ public class ServerHardwareApi extends OneAndOneAPIBase {
     /**
      * Returns information about the server's hardware.
      * @param serverId Unique server's identifier.
-     * @return Hardware
+     * @return ServerHardware
      * @throws RestClientException
      * @throws IOException
      */
-    public Hardware getHardware(String serverId) throws RestClientException, IOException {
-        return client.get(getUrlBase().concat(parentResource).concat("/").concat(serverId).concat("/").concat(resource), null, Hardware.class);
+    public ServerHardware getHardware(String serverId) throws RestClientException, IOException {
+        return client.get(getUrlBase().concat(parentResource).concat("/").concat(serverId).concat("/").concat(resource), null, ServerHardware.class);
     }
 
     /**
