@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 aliba.
+ * Copyright 2017 aajdinov.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,29 +15,18 @@
  */
 package com.oneandone.rest.POJO.Response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
- *
- * @author aliba
+ * @author aajdinov
  */
-public class AvailableHardwareFlavour {
+@JsonInclude(Include.NON_NULL)
+public class BaremetalModelResponse {
 
-    private String name;
     private String id;
-    private ServerHardware hardware;
-
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+    private String name;
+    private BaremetalModelHardware hardware;
 
     /**
      * @return the id
@@ -54,16 +43,30 @@ public class AvailableHardwareFlavour {
     }
 
     /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
      * @return the hardware
      */
-    public ServerHardware getHardware() {
+    public BaremetalModelHardware getHardware() {
         return hardware;
     }
 
     /**
      * @param hardware the hardware to set
      */
-    public void setHardware(ServerHardware hardware) {
+    public void setHardware(BaremetalModelHardware hardware) {
         this.hardware = hardware;
     }
 

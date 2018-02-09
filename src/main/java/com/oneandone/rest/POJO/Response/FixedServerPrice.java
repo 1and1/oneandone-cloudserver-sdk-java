@@ -32,7 +32,7 @@ public class FixedServerPrice {
     @JsonProperty("unit")
     private String unit;
     @JsonProperty("hardware")
-    private Hardware hardware;
+    private ServerHardware hardware;
 
     /**
      *
@@ -111,7 +111,7 @@ public class FixedServerPrice {
      * @return The hardware
      */
     @JsonProperty("hardware")
-    public Hardware getHardware() {
+    public ServerHardware getHardware() {
         return hardware;
     }
 
@@ -120,7 +120,7 @@ public class FixedServerPrice {
      * @param hardware The hardware
      */
     @JsonProperty("hardware")
-    public void setHardware(Hardware hardware) {
+    public void setHardware(ServerHardware hardware) {
         this.hardware = hardware;
     }
 }

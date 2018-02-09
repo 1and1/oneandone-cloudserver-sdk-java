@@ -16,7 +16,6 @@
 package com.oneandone.sdk;
 
 import com.oneandone.rest.client.ConfigReader;
-
 import java.util.Properties;
 
 public class OneAndOneApi {
@@ -63,6 +62,8 @@ public class OneAndOneApi {
         this.priceApi=new PriceApi();
         this.blockStoragesApi=new BlockStoragesApi();
         this.sshKeysApi=new SshKeysApi();
+        this.baremetalModelApi = new BaremetalModelApi();
+        this.recoveryAppliancesApi = new RecoveryAppliancesApi();
     }
 
     private ImageApi imageApi;
@@ -101,6 +102,8 @@ public class OneAndOneApi {
     private PriceApi priceApi;
     private BlockStoragesApi blockStoragesApi;
     private SshKeysApi sshKeysApi;
+    private BaremetalModelApi baremetalModelApi;
+    private RecoveryAppliancesApi recoveryAppliancesApi;
 
     /**
      * @return the imageApi
@@ -118,7 +121,7 @@ public class OneAndOneApi {
     }
 
     /**
-     * @param credentials the credentials to set
+     * @param token the credentials to set
      */
     public void setToken(String token) {
         if (token != null && !token.isEmpty()) {
@@ -654,4 +657,30 @@ public class OneAndOneApi {
     public void setSshKeysApi(SshKeysApi sshKeysApi) {
         this.sshKeysApi = sshKeysApi;
     }
+
+    /**
+     * @return the baremetalModelApi
+     */
+    public BaremetalModelApi getBaremetalModelApi() {
+        this.baremetalModelApi.setToken(token);
+        return baremetalModelApi;
+    }
+
+    /**
+     * @param baremetalModelApi the baremetalModelApi to set
+     */
+    public void setBaremetalModelApi(BaremetalModelApi baremetalModelApi) { this.baremetalModelApi = baremetalModelApi; }
+
+    /**
+     * @return the recoveryAppliancesApi
+     */
+    public RecoveryAppliancesApi getRecoveryAppliancesApi() {
+        this.recoveryAppliancesApi.setToken(token);
+        return recoveryAppliancesApi;
+    }
+
+    /**
+     * @param recoveryAppliancesApi the recoveryAppliancesApi to set
+     */
+    public void setRecoveryAppliancesApi(RecoveryAppliancesApi recoveryAppliancesApi) { this.recoveryAppliancesApi = recoveryAppliancesApi; }
 }

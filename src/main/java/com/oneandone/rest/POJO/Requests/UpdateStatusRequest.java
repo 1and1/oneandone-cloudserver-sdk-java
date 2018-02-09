@@ -17,6 +17,7 @@ package com.oneandone.rest.POJO.Requests;
 
 import com.oneandone.rest.POJO.Response.Types.ServerAction;
 import com.oneandone.rest.POJO.Response.Types.ServerActionMethod;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *
@@ -26,6 +27,10 @@ public class UpdateStatusRequest  extends BaseRequest{
 
     private ServerAction action;
     private ServerActionMethod method;
+    @JsonProperty("recovery_mode")
+    private Boolean recoveryMode;
+    @JsonProperty("recovery_image_id")
+    private String recoveryImageId;
 
     /**
      * @return the action
@@ -54,5 +59,25 @@ public class UpdateStatusRequest  extends BaseRequest{
     public void setMethod(ServerActionMethod method) {
         this.method = method;
     }
+
+    /**
+     * @return the recovery_mode
+     */
+    public Boolean getRecoveryMode() { return recoveryMode; }
+
+    /**
+     * @param recoveryMode the recovery_mode to set
+     */
+    public void setRecoveryMode(Boolean recoveryMode) { this.recoveryMode = recoveryMode; }
+
+    /**
+     * @return the recovery_image_id
+     */
+    public String getRecoveryImageId() { return recoveryImageId; }
+
+    /**
+     * @param recoveryImageId the recovery_image_id to set
+     */
+    public void setRecoveryImageId(String recoveryImageId) { this.recoveryImageId = recoveryImageId; }
 
 }
