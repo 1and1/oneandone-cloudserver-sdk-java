@@ -75,14 +75,15 @@ public class FirewallPolicyServersTest {
 
     @AfterClass
     public static void testCleanup() throws RestClientException, IOException, InterruptedException {
-        TestHelper.waitFirewallPolicyReady(firewallPolicy.getId());
-        FirewallPolicyResponse result = oneandoneApi.getFirewallPoliciesApi().deleteFirewallPolicy(firewallPolicy.getId());
-        assertNotNull(result);
-
         if (serverId != null) {
             TestHelper.waitServerReady(serverId);
             oneandoneApi.getServerApi().deleteServer(serverId, false);
+            TestHelper.waitServerDeleted(serverId);
         }
+
+        TestHelper.waitFirewallPolicyReady(firewallPolicy.getId());
+        FirewallPolicyResponse result = oneandoneApi.getFirewallPoliciesApi().deleteFirewallPolicy(firewallPolicy.getId());
+        assertNotNull(result);
     }
 
     @Test

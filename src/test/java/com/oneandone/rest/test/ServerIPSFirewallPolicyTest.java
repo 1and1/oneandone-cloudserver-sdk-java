@@ -40,25 +40,25 @@ import org.junit.Test;
  * @author aliba
  */
 public class ServerIPSFirewallPolicyTest {
-
+    
     static OneAndOneApi oneandoneApi = new OneAndOneApi();
     static Random rand = new Random();
     static String serverId;
     static String ipId;
     static ServerResponse server;
     static FirewallPolicyResponse fwPolicy;
-
+    
     @BeforeClass
     public static void getServerIPS() throws RestClientException, IOException, InterruptedException {
         oneandoneApi.setToken(System.getenv("OAO_TOKEN"));
         serverId = CreateTestServer("servers firewall policy test", false).getId();
         List<ServerIPs> result = oneandoneApi.getServerIpsApi().getServerIps(serverId);
         ipId = result.get(0).getId();
-
+        
         CreateFirewallPolicyRequest request = new CreateFirewallPolicyRequest();
         List<CreateFirewallPocliyRule> rules = new ArrayList<CreateFirewallPocliyRule>();
         CreateFirewallPocliyRule ruleA = new CreateFirewallPocliyRule();
-
+        
         ruleA.setSource("0.0.0.0");
         ruleA.setPortTo(80);
         ruleA.setPortFrom(80);
@@ -67,7 +67,7 @@ public class ServerIPSFirewallPolicyTest {
         request.setRules(rules);
         request.setName("javaPolicy" + rand.nextInt(200));
         request.setDescription("desc");
-
+        
         fwPolicy = oneandoneApi.getFirewallPoliciesApi().createFirewallPolicy(request);
         assertNotNull(result);
         TestHelper.waitFirewallPolicyReady(fwPolicy.getId());
@@ -77,19 +77,21 @@ public class ServerIPSFirewallPolicyTest {
         assertNotNull(fwResult);
         TestHelper.waitFirewallPolicyReady(fwPolicy.getId());
     }
-
+    
     @AfterClass
     public static void deleteServer() throws RestClientException, IOException, InterruptedException {
+        if (serverId != null) {
+            TestHelper.waitServerReady(serverId);
+            oneandoneApi.getServerApi().deleteServer(serverId, false);
+            TestHelper.waitServerDeleted(serverId);
+        }
+        
         if (fwPolicy != null) {
             TestHelper.waitFirewallPolicyReady(fwPolicy.getId());
             oneandoneApi.getFirewallPoliciesApi().deleteFirewallPolicy(fwPolicy.getId());
         }
-        if (serverId != null) {
-            TestHelper.waitServerReady(serverId);
-            oneandoneApi.getServerApi().deleteServer(serverId, false);
-        }
     }
-
+    
     @Test
     public void getFirewallPolicy() throws RestClientException, IOException, InterruptedException {
         List<ServerFirewallPolicy> result;
@@ -97,12 +99,5 @@ public class ServerIPSFirewallPolicyTest {
         result = oneandoneApi.getServerIpsApi().getServerIPFirewallPolicies(serverId, server.getIps().get(0).getId());
         assertNotNull(result);
     }
-
-    @Test
-    public void deleteFirewallPolicy() throws RestClientException, IOException, InterruptedException {
-        server = oneandoneApi.getServerApi().getServer(serverId);
-        ServerResponse result = oneandoneApi.getServerIpsApi().deleteServerIPFirewallPolicy(server.getId(), server.getIps().get(0).getId());
-        assertNotNull(result);
-    }
-
+    
 }

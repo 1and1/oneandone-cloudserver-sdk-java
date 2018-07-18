@@ -111,18 +111,6 @@ public class ServerIpsApi extends OneAndOneAPIBase {
     }
 
     /**
-     * Removes firewall policy from the IP
-     * @param serverId Unique server's identifier.
-     * @param ipId Unique IP's identifier.
-     * @return ServerResponse
-     * @throws RestClientException
-     * @throws IOException
-     */
-    public ServerResponse deleteServerIPFirewallPolicy(String serverId, String ipId) throws RestClientException, IOException {
-        return client.delete(getUrlBase().concat(parentResource).concat("/").concat(serverId).concat("/").concat(resource).concat("/").concat(ipId).concat("/").concat(childResource), ServerResponse.class);
-    }
-
-    /**
      * Lists all load balancers assigned to the IP
      * @param serverId Unique server's identifier.
      * @param ipId Unique server's identifier.

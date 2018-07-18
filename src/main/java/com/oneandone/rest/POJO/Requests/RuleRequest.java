@@ -16,6 +16,7 @@
 package com.oneandone.rest.POJO.Requests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.oneandone.rest.POJO.Response.Types;
 import com.oneandone.rest.POJO.Response.Types.RuleProtocol;
 
 /**
@@ -30,6 +31,9 @@ public class RuleRequest extends BaseRequest {
     @JsonProperty("port_to")
     private int portTo;
     private String source;
+    private Types.RuleAction action;
+    private String port;
+    private String description;
 
     /**
      * @return the protocol
@@ -87,4 +91,45 @@ public class RuleRequest extends BaseRequest {
         this.source = source;
     }
 
+    /**
+     * @return the action
+     */
+    public Types.RuleAction getAction() {
+        return action;
+    }
+
+    /**
+     * @param action the action to set
+     */
+    public void setAction(Types.RuleAction action) {
+        this.action = action;
+    }
+
+    /**
+     * @return the port
+     */
+    public String getPort() {
+        return port;
+    }
+
+    /**
+     * @param port the port to set
+     */
+    public void setPort(String port) {
+        this.port = port;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

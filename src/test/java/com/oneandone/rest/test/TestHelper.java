@@ -27,8 +27,10 @@ import com.oneandone.rest.POJO.Response.ServerAppliancesResponse;
 import com.oneandone.rest.POJO.Response.ServerResponse;
 import com.oneandone.rest.POJO.Response.SharedStorageResponse;
 import com.oneandone.rest.POJO.Response.BlockStorageResponse;
+import com.oneandone.rest.POJO.Response.AvailableHardwareFlavour;
 import com.oneandone.rest.POJO.Response.Types;
 import com.oneandone.rest.client.RestClientException;
+import static com.oneandone.rest.test.ServersTest.oneandoneApi;
 import com.oneandone.sdk.OneAndOneApi;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,6 +58,19 @@ public class TestHelper {
                 || (server.getStatus().getPercent() != 0 && server.getStatus().getPercent() != 99))) {
             TimeUnit.SECONDS.sleep(6);
             server = oneandoneApi.getServerApi().getServer(serverId);
+        }
+    }
+
+    public static void waitServerDeleted(String serverId) throws InterruptedException, RestClientException, IOException {
+        TimeUnit.SECONDS.sleep(4);
+        ServerResponse server = oneandoneApi.getServerApi().getServer(serverId);
+        while (true) {
+            TimeUnit.SECONDS.sleep(6);
+            try {
+                server = oneandoneApi.getServerApi().getServer(serverId);
+            } catch (RestClientException ex) {
+                return;
+            }
         }
     }
 
@@ -132,6 +147,23 @@ public class TestHelper {
         } else {
             appliance = appliances.get(0);
         }
+        
+        for (ServerAppliancesResponse aplnc : appliances) {
+            if (aplnc.getType().equals("IMAGE")) {
+                appliance = aplnc;
+                break;
+            }
+        }
+
+        String flavourId = "";
+        List<AvailableHardwareFlavour> flavours = oneandoneApi.getServerApi().getAvailableFixedServers();
+        for (AvailableHardwareFlavour flavour : flavours) {
+            if ("L".equals(flavour.getName())) {
+                flavourId = flavour.getId();
+                break;
+            }
+        }
+
         CreateServerRequest object = new CreateServerRequest();
         if (appliance != null) {
             object.setApplianceId(appliance.getId());
@@ -140,15 +172,7 @@ public class TestHelper {
         object.setDescription("Desc test");
         //setHardware
         HardwareRequest hardware = new HardwareRequest();
-        hardware.setCoresPerProcessor(CoresPerProcessor);
-        hardware.setVcore(vcore);
-        hardware.setRam(4.0);
-        HddRequest hdd = new HddRequest();
-        hdd.setSize(60);
-        hdd.setIsMain(Boolean.TRUE);
-        List<HddRequest> hdds = new ArrayList<HddRequest>();
-        hdds.add(hdd);
-        hardware.setHdds((hdds));
+        hardware.setFixedInstanceSizeId(flavourId);
         object.setHardware(hardware);
         object.setPowerOn(powerON);
         object.setPassword("Test123!");
