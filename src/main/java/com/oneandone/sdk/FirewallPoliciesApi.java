@@ -21,7 +21,6 @@ import com.oneandone.rest.POJO.Response.FirewallPolicyResponse;
 import com.oneandone.rest.POJO.Requests.CreateFirewallPolicyRequest;
 import com.oneandone.rest.POJO.Requests.UpdateFirewallPolicyRequest;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 

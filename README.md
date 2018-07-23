@@ -291,10 +291,6 @@ request.setId(policyId);
 ServerResponse result = oneandoneApi.getServerIpsApi().updateServerIPFirewallPolicy(serverId, ipId, request);
 ```
 
-**Remove a firewall policy from a server's IP:**
-
-`ServerResponse result = oneandoneApi.getServerIpsApi().deleteServerIPFirewallPolicy(serverId, ipId);`
-
 **Assign a new load balancer to a server's IP:**
 
 ```
@@ -546,8 +542,8 @@ CreateFirewallPocliyRule ruleA = new CreateFirewallPocliyRule();
 ```
 ```
 ruleA.setSource(srouce);
-ruleA.setPortTo(portTo);
-ruleA.setPortFrom(portFrom);
+ruleA.setPort(portTo);
+ruleA.setAction(RuleAction.Allow);
 ruleA.setProtocol(RuleProtocol.TCP);
 rules.add(ruleA);
 request.setRules(rules);
@@ -597,11 +593,6 @@ request.setServerIps(ipToAdd);
 FirewallPolicyResponse result = oneandoneApi.getFirewallPolicyServerApi().createFirewallPolicyServerIPs(request, policyId);
 ```
 
-**Remove a server/IP from a firewall policy:**
-
-`FirewallPolicyResponse result = oneandoneApi.getFirewallPolicyServerApi().deleteFirewallPolicyServerIPs(policyId, serverIPId);`
-
-
 **List rules of a firewall policy:**
 
 `List<FirewallRule> result = oneandoneApi.getFirewallPolicyRuleApi().getFirewallPolicyRules(policyId);`
@@ -621,8 +612,8 @@ RuleRequest ruleA = new RuleRequest();
 ```
 ```
 ruleA.setSource(source_ip);
-ruleA.setPortTo(value);
-ruleA.setPortFrom(value);
+ruleA.setPort(value);
+ruleA.setAction(RuleAction.Allow);
 ruleA.setProtocol(Types.RuleProtocol.TCP);
 rules.add(ruleA);
 request.setRules(rules);

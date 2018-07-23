@@ -256,6 +256,7 @@ public class Types {
       ICMP("ICMP"),
       AH("AH"),
       ESP("ESP"),
+      All("all"),
       GRE("GRE");
 
       // the value which is used for matching
@@ -263,6 +264,24 @@ public class Types {
       private final String value;
 
       RuleProtocol(final String type) {
+         value = type;
+      }
+
+      @Override
+      public String toString() {
+         return value;
+      }
+   }
+   
+   public enum RuleAction {
+      Allow("allow"),
+      Deny("deny");
+
+      // the value which is used for matching
+      // the json node value with this enum
+      private final String value;
+
+      RuleAction(final String type) {
          value = type;
       }
 

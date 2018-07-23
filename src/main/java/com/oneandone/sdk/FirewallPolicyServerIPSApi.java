@@ -73,17 +73,4 @@ public class FirewallPolicyServerIPSApi extends OneAndOneAPIBase {
     public FirewallPolicyResponse createFirewallPolicyServerIPs(AssignFirewallServerIPRequest object,String policyId) throws RestClientException, IOException {
         return client.create(getUrlBase().concat(parentResource).concat("/").concat(policyId).concat("/").concat(resource), object, FirewallPolicyResponse.class, 202);
     }
-
-    /**
-     * Unassigns a server/IP from a firewall policy.
-     * @param policyId Unique firewall's identifier.
-     * @param serverId Unique IP's identifier.
-     * @return FirewallPolicyResponse
-     * @throws RestClientException
-     * @throws IOException
-     */
-    public FirewallPolicyResponse deleteFirewallPolicyServerIPs(String policyId,String serverId) throws RestClientException, IOException {
-        return client.delete(getUrlBase().concat(parentResource).concat("/").concat(policyId).concat("/").concat(resource).concat("/").concat(serverId), FirewallPolicyResponse.class);
-    }
-
 }

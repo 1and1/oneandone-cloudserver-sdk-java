@@ -22,6 +22,7 @@ import com.oneandone.rest.POJO.Requests.RuleRequest;
 import com.oneandone.rest.POJO.Response.FirewallPolicyResponse;
 import com.oneandone.rest.POJO.Response.FirewallRule;
 import com.oneandone.rest.POJO.Response.Types;
+import com.oneandone.rest.POJO.Response.Types.RuleAction;
 import com.oneandone.rest.client.RestClientException;
 import com.oneandone.sdk.OneAndOneApi;
 import java.io.IOException;
@@ -63,9 +64,9 @@ public class FirewallPolicyRulesTest {
             CreateFirewallPocliyRule ruleA = new CreateFirewallPocliyRule();
 
             ruleA.setSource("0.0.0.0");
-            ruleA.setPortTo(80);
-            ruleA.setPortFrom(80);
+            ruleA.setPort("80");
             ruleA.setProtocol(Types.RuleProtocol.TCP);
+            ruleA.setAction(RuleAction.Allow);
             rules.add(ruleA);
             request.setRules(rules);
             request.setName("javaPolicy" + rand.nextInt(200));
@@ -96,10 +97,10 @@ public class FirewallPolicyRulesTest {
         List<RuleRequest> rules = new ArrayList<RuleRequest>();
         RuleRequest ruleA = new RuleRequest();
 
-        int value = 80 + rand.nextInt(9);
+        String value = "80" + rand.nextInt(9);
         ruleA.setSource("0.0.0.0");
-        ruleA.setPortTo(value);
-        ruleA.setPortFrom(value);
+        ruleA.setPort(value);
+        ruleA.setAction(RuleAction.Allow);
         ruleA.setProtocol(Types.RuleProtocol.TCP);
         rules.add(ruleA);
         request.setRules(rules);
