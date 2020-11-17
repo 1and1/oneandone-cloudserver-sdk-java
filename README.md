@@ -2,7 +2,7 @@
 
 The 1&1 Java SDK is a Java library designed for interaction with the 1&1 cloud platform over the REST API.
 
-This guide contains instructions on getting started with the library and automating various management tasks available through the 1&1 Cloud Panel UI. For more information on the 1&1 Cloudserver Java SDK see the [1&1 Community Portal](https://www.1and1.com/cloud-community/).
+This guide contains instructions on getting started with the library and automating various management tasks available through the 1&1 Cloud Panel UI. 
 
 ## Table of Contents
 
@@ -39,8 +39,6 @@ This guide contains instructions on getting started with the library and automat
 ## Overview
 
 This SDK is a wrapper for the 1&1 REST API written in Java. All operations against the API are performed over SSL and authenticated using your 1&1 token key. The Java library facilitates the access to the REST API within an instance running on 1&1 platform.
-
-For more information on the 1&1 Cloud Server SDK for Java, visit the [Community Portal](https://www.1and1.com/cloud-community/).
 
 ## Getting Started
 
